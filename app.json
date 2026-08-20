@@ -1,23 +1,25 @@
 {
   "expo": {
     "name": "Scan-Minifigs",
-    "slug": "Scan-Minifigs",
+    "slug": "scan-minifigs",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "scanminifigs",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/images/icon.png",
+      "bundleIdentifier": "com.simonreact.scanminifigs"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/icon.png"
+        //"backgroundImage": "./assets/images/android-icon-background.png",
+        //"monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.simonreact.scanminifigs"
     },
     "web": {
       "output": "static",
@@ -34,11 +36,24 @@
             "imageWidth": 76
           }
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Minifig Scan to access your camera to scan LEGO minifigure codes."
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "cd435b88-6ec8-4472-8d35-2d12d33a36b1"
+      }
+    },
+    "owner": "simonreact"
   }
 }
