@@ -15,24 +15,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useCollectionStore } from "@/store/collectionStore";
 import { styles } from "@/styles/scanScreen.styles";
 
-/**
- * Replace these imports with your real models/services.
- */
-//import { MINIFIGURES } from "@/models/minifigures";
-//import { SERIES } from "@/models/minifigureSeries";
 
-/*import {
-  lookupDataMatrix,
-  type DataMatrixLookupResult,
-} from "@/services/lookupDataMatrix";
- */
 import { Minifigure } from "@/models/minifigure";
 import { useMinifigureStore } from "@/store/minifigureStore";
+import { useIsFocused } from "@react-navigation/native";
 import CameraSettingsSheet from "../components/cameraSettingsSheet";
 
 
 export default function ScanScreen() {
   const [permission, requestPermission] = useCameraPermissions();
+  const isFocused = useIsFocused();
 
   const addScan = useCollectionStore(
     (state) => state.addScan
@@ -43,6 +35,7 @@ const [continuousScan, setContinuousScan] = useState(true);
 const [hapticsEnabled, setHapticsEnabled] = useState(true);
 const [keepAwake, setKeepAwake] = useState(true);
 const [zoom, setZoom] = useState(0);
+
   
   //const [scanned, setScanned] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -54,10 +47,6 @@ const [zoom, setZoom] = useState(0);
   const [scannedCode, setScannedCode] =
     useState("");
 
-
-
-//const [scanResult, setScanResult] =
-//  useState<DataMatrixLookupResult | null>(null);
 const [scanResult, setScanResult] = useState<Minifigure | null>(null);
  const collection = useCollectionStore((state) => state.collection);
  const addScanToHistory = useCollectionStore(
@@ -204,7 +193,7 @@ Minifigure codes.
       {/* ===========================
           Camera
       =========================== */}
-
+      {isFocused ? (
       <CameraView
         style={styles.camera}
         facing="back"
@@ -214,7 +203,7 @@ Minifigure codes.
         }}
         onBarcodeScanned={onBarcodeScanned}
         
-      />
+      />) : null }
 
       {/* ===========================
           Overlay
@@ -298,60 +287,50 @@ Minifigure codes.
           {scanResult.name}
         </Text>
 
-        {alreadyOwned ? (
-          <View style={styles.quantityRow}>
-            <TouchableOpacity
-              style={styles.quantityButton}
-              onPress={() => decrement(scanResult.id)}
-            >
-              <Ionicons
-                name="remove"
-                size={18}
-                color="#FFF"
-              />
-            </TouchableOpacity>
+<View style={styles.quantityRow}>
+  <TouchableOpacity
+    style={styles.quantityButton}
+    onPress={() => {
+      if (alreadyOwned) {
+        decrement(scanResult.id);
+      }
+    }}
+    disabled={!alreadyOwned}
+  >
+    <Ionicons
+      name="remove"
+      size={20}
+      color={alreadyOwned ? "#111827" : "#9CA3AF"}
+    />
+  </TouchableOpacity>
 
-            <Text style={styles.quantityText}>
-              {ownedItem?.quantity ?? 0}
-            </Text>
+  <Text style={styles.quantityText}>
+    {ownedItem?.quantity ?? 0}
+  </Text>
 
-            <TouchableOpacity
-              style={styles.quantityButton}
-              onPress={() => increment(scanResult.id)}
-            >
-              <Ionicons
-                name="add"
-                size={18}
-                color="#FFF"
-              />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={() => {
-              addScan(scanResult.id);
-              console.log(
-  "STORE AFTER ADD:",
-  useCollectionStore.getState().collection
-);
+  <TouchableOpacity
+    style={styles.quantityButton}
+    onPress={() => {
+      if (alreadyOwned) {
+        increment(scanResult.id);
+      } else {
+        addScan(scanResult.id);
 
-              Haptics.notificationAsync(
-                Haptics.NotificationFeedbackType.Success
-              );
-            }}
-          >
-            <Ionicons
-              name="add-circle"
-              size={20}
-              color="#FFF"
-            />
-
-            <Text style={styles.addButtonText}>
-              Add to Collection
-            </Text>
-          </TouchableOpacity>
-        )}
+        if (hapticsEnabled) {
+          Haptics.notificationAsync(
+            Haptics.NotificationFeedbackType.Success
+          );
+        }
+      }
+    }}
+  >
+    <Ionicons
+      name="add"
+      size={20}
+      color="#111827"
+    />
+  </TouchableOpacity>
+</View>
       </View>
     </>
   ) : (

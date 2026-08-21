@@ -76,15 +76,7 @@ useEffect(() => {
       </SafeAreaView>
     );
   }
-  /*const figures = MINIFIGURES
-    .filter(f => f.seriesId === series.id)
-    .map(f => ({
-        ...f,
-        owned:
-            collection.find(c => c.id === f.id)
-                ?.quantity ?? 0,
-    }));
-    */
+
    const figures = minifigures
   .filter(f => f.seriesId === series.id)
   .map(f => ({

@@ -136,8 +136,8 @@ export const styles = StyleSheet.create({
   },
 
   yearChipSelected: {
-    backgroundColor: "#4CAF50",
-    borderColor: "#4CAF50",
+    backgroundColor: "#FBBF24",
+    borderColor: "#FBBF24",
   },
 
   yearChipText: {

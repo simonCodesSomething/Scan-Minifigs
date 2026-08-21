@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Linking, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Linking, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { styles } from "@/styles/about.styles";
@@ -15,6 +15,38 @@ export default function AboutScreen() {
       console.error("Unable to open support page:", error);
     }
   };
+const handleReportCode = async () => {
+  const email = "info@scan-minifigs.com";
+  const subject = "New Scan Minifigs Data Matrix Code";
+  const body =
+    "Data Matrix Code:\n\n" +
+    "Series:\n\n" +
+    "Minifigure:\n\n";
+
+  const url = `mailto:${email}?subject=${encodeURIComponent(
+    subject
+  )}&body=${encodeURIComponent(body)}`;
+
+  try {
+    const supported = await Linking.canOpenURL(url);
+
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      Alert.alert(
+        "Email Not Available",
+        `No email app is available on this device. You can send the code to ${email}.`
+      );
+    }
+  } catch (error) {
+    console.error("Unable to open email:", error);
+
+    Alert.alert(
+      "Unable to Open Email",
+      `Please send the code to ${email}.`
+    );
+  }
+};
 
   return (
     <SafeAreaView style={styles.container}>
@@ -54,7 +86,7 @@ export default function AboutScreen() {
             <Ionicons
               name="scan-outline"
               size={32}
-              color="#FFFFFF"
+              color="#FBBF24"
             />
           </View>
 
@@ -62,17 +94,15 @@ export default function AboutScreen() {
             Scan Minifigs
           </Text>
 
-          <Text style={styles.cardText}>
-            Scan Minifigs is an independent collector tool
-            designed to help you identify and keep track of your
-            LEGO Minifigure collection.
-          </Text>
-
-          <Text style={styles.cardText}>
-            Scan supported minifigure Data Matrix codes to quickly
-            identify figures, browse supported series, and keep
-            track of the Minifigures you have discovered.
-          </Text>
+<Text style={styles.cardText}>Scan Minifigs is an independent collector tool designed to help you identify and keep track of your LEGO Minifigure collection. </Text>
+ <Text style={styles.cardText}>
+  Scanning is supported for Series 25 figures with supported
+  Data Matrix codes, generally from mid-production onward, as
+  well as supported series produced after Series 25. Earlier
+  figures and production runs without supported codes are
+  provided as collection lists only.
+</Text>
+ <Text style={styles.cardText}>Scan supported minifigure Data Matrix codes to quickly identify figures, browse supported series, and keep track of the Minifigures you have discovered. </Text>
         </View>
 
         {/* What We Do */}
@@ -153,6 +183,57 @@ export default function AboutScreen() {
             </View>
           </View>
         </View>
+        {/* Help Improve Scanning */}
+<View style={styles.section}>
+  <Text style={styles.sectionTitle}>
+    Help Improve Scanning
+  </Text>
+
+  <View style={styles.card}>
+    <View style={styles.iconContainer}>
+      <Ionicons
+        name="mail-outline"
+        size={32}
+        color="#FFFFFF"
+      />
+    </View>
+
+    <Text style={styles.cardTitle}>
+      Found a New Code?
+    </Text>
+
+    <Text style={styles.cardText}>
+      Found a Data Matrix code that Scan Minifigs does not
+      recognize? You can help expand scanning support by
+      sending the code to us.
+    </Text>
+
+    <Text style={styles.cardText}>
+      If possible, include the scanned code along with the
+      Minifigure series and figure name. Submitted codes may
+      be reviewed and added to the catalog to help support
+      future scans.
+    </Text>
+
+    <Pressable
+      onPress={handleReportCode}
+      style={({ pressed }) => [
+        styles.supportButton,
+        pressed && styles.supportButtonPressed,
+      ]}
+    >
+      <Ionicons
+        name="mail-outline"
+        size={20}
+        color="#111827"
+      />
+
+      <Text style={styles.supportButtonText}>
+        Send New Code
+      </Text>
+    </Pressable>
+  </View>
+</View>
 
         {/* Support */}
         <View style={styles.section}>
@@ -196,7 +277,7 @@ export default function AboutScreen() {
               <Ionicons
                 name="cafe-outline"
                 size={20}
-                color="#FFFFFF"
+                color="#111827"
               />
 
               <Text style={styles.supportButtonText}>

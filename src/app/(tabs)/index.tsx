@@ -71,6 +71,7 @@ export default function Index() {
             recentScans[0].id
         )
       : undefined;
+      
 
 
   const greeting =

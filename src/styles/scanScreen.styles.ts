@@ -116,7 +116,7 @@ export const styles = StyleSheet.create({
     height: 45,
     borderTopWidth: 5,
     borderLeftWidth: 5,
-    borderColor: "#00E676",
+    borderColor: "#FBBF24",
     borderTopLeftRadius: 12,
   },
 
@@ -127,7 +127,7 @@ export const styles = StyleSheet.create({
     height: 45,
     borderTopWidth: 5,
     borderRightWidth: 5,
-    borderColor: "#00E676",
+    borderColor: "#FBBF24",
     borderTopRightRadius: 12,
   },
 
@@ -138,7 +138,7 @@ export const styles = StyleSheet.create({
     height: 45,
     borderBottomWidth: 5,
     borderLeftWidth: 5,
-    borderColor: "#00E676",
+    borderColor: "#FBBF24",
     borderBottomLeftRadius: 12,
   },
 
@@ -150,7 +150,7 @@ export const styles = StyleSheet.create({
     height: 45,
     borderBottomWidth: 5,
     borderRightWidth: 5,
-    borderColor: "#00E676",
+    borderColor: "#FBBF24",
     borderBottomRightRadius: 12,
   },
 
@@ -216,6 +216,7 @@ export const styles = StyleSheet.create({
     width: 72,
     height: 72,
     backgroundColor: "#ffffff",
+    borderRadius: 12,
   },
 
   resultInfo: {
@@ -264,8 +265,8 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
   },
   addButton: {
-    marginTop: 14,
-    backgroundColor: "#22C55E",
+    marginTop: 0,
+    backgroundColor: "#FBBF24",
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -276,7 +277,7 @@ export const styles = StyleSheet.create({
   },
 
   addButtonText: {
-    color: "#FFFFFF",
+    color: "#111827",
     fontSize: 16,
     fontWeight: "700",
   },
@@ -298,7 +299,7 @@ export const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "#22C55E",
+    backgroundColor: "#FBBF24",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -317,7 +318,7 @@ export const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: "#2563EB",
+    backgroundColor: "#FBBF24",
     justifyContent: "center",
     alignItems: "center",
   },

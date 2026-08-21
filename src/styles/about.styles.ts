@@ -60,6 +60,7 @@ export const styles = StyleSheet.create({
     color: "#CBD5E1",
     fontSize: 16,
     lineHeight: 24,
+    textAlign: "center",
   },
 
   section: {
@@ -199,7 +200,7 @@ export const styles = StyleSheet.create({
     marginTop: 18,
     minHeight: 48,
     borderRadius: 12,
-    backgroundColor: "#2563EB",
+    backgroundColor: "#FBBF24",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -212,7 +213,7 @@ export const styles = StyleSheet.create({
   },
 
   supportButtonText: {
-    color: "#FFFFFF",
+    color: "#111827",
     fontSize: 16,
     fontWeight: "600",
   },

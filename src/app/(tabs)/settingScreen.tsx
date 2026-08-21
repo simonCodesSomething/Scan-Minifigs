@@ -92,7 +92,7 @@ export default function SettingsScreen() {
                 <Ionicons
                   name="information-circle-outline"
                   size={23}
-                  color="#60A5FA"
+                  color="#FBBF24"
                 />
               </View>
 
@@ -118,7 +118,7 @@ export default function SettingsScreen() {
                 <Ionicons
                   name="shield-checkmark-outline"
                   size={23}
-                  color="#60A5FA"
+                  color="#FBBF24"
                 />
               </View>
 
@@ -144,7 +144,7 @@ export default function SettingsScreen() {
                 <Ionicons
                   name="document-text-outline"
                   size={23}
-                  color="#60A5FA"
+                  color="#FBBF24"
                 />
               </View>
 
