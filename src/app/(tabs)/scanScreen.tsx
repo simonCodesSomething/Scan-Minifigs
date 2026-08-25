@@ -81,56 +81,45 @@ const lookupDataMatrix = useMinifigureStore(
     setLoading(false);
   };
 
-const onBarcodeScanned = async ({
+const onBarcodeScanned = ({
   data,
 }: {
   data: string;
 }) => {
-
   const code = data.trim().split(/\s+/)[0];
+
   console.log("code", code);
-  // Ignore the same code repeatedly
-  // while it remains in view.
+
+  // Ignore the same code repeatedly while it remains in view
   if (code === lastScannedCode) {
     return;
   }
 
   setLastScannedCode(code);
-  setLoading(true);
   setScannedCode(code);
 
-  try {
+  const result = lookupDataMatrix(code);
 
-    const result =
-      lookupDataMatrix(code);
+  if (result) {
+    // Update the UI immediately
+    setScanResult(result);
 
-    if (result) {
+    // Do secondary actions after updating the result
+    addScanToHistory(result.id);
 
-      if (hapticsEnabled) {
-        await Haptics.notificationAsync(
-          Haptics.NotificationFeedbackType.Success
-        );
-      }
-
-      addScanToHistory(result.id);
-
-      setScanResult(result);
-
-    } else {
-
-      if (hapticsEnabled) {
-        await Haptics.notificationAsync(
-          Haptics.NotificationFeedbackType.Error
-        );
-      }
-
-      setScanResult(null);
+    if (hapticsEnabled) {
+      Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Success
+      );
     }
+  } else {
+    setScanResult(null);
 
-  } finally {
-
-    setLoading(false);
-
+    if (hapticsEnabled) {
+      Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Error
+      );
+    }
   }
 };
 
@@ -238,125 +227,98 @@ Minifigure codes.
             Live Scan Result
         =========================== */}
 
-{(loading || scanResult || scannedCode) && (
-<View style={styles.resultCard}>
-  {loading ? (
-    <>
-      {scanResult && (
+{(scanResult || scannedCode) && (
+  <View style={styles.resultCard}>
+    {scanResult ? (
+      <>
         <Image
-          source={{ uri: scanResult.image}}
+          source={{ uri: scanResult.image }}
           style={styles.resultImage}
           resizeMode="contain"
         />
-      )}
 
-      <View style={styles.resultInfo}>
-        <Text
-          style={styles.resultTitle}
-          numberOfLines={2}
-        >
-          {scanResult?.name ?? "Looking up minifigure..."}
-        </Text>
+        <View style={styles.resultInfo}>
+          <Text
+            style={styles.resultTitle}
+            numberOfLines={2}
+          >
+            {scanResult.name}
+          </Text>
 
-        <Text style={styles.resultSubtitle}>
-          {scanResult?.name ?? scannedCode}
-        </Text>
+          <Text style={styles.resultSubtitle}>
+            {scanResult.name}
+          </Text>
 
-        <Text style={styles.resultCode}>
-          Scanning...
-        </Text>
-      </View>
-    </>
-  ) : scanResult ? (
-    <>
-      <Image
-        source={{ uri: scanResult.image }}
-        style={styles.resultImage}
-        resizeMode="contain"
-      />
+          <View style={styles.quantityRow}>
+            <TouchableOpacity
+              style={styles.quantityButton}
+              onPress={() => {
+                if (alreadyOwned) {
+                  decrement(scanResult.id);
+                }
+              }}
+              disabled={!alreadyOwned}
+            >
+              <Ionicons
+                name="remove"
+                size={20}
+                color={alreadyOwned ? "#111827" : "#9CA3AF"}
+              />
+            </TouchableOpacity>
 
-      <View style={styles.resultInfo}>
-        <Text
-          style={styles.resultTitle}
-          numberOfLines={2}
-        >
-          {scanResult.name}
-        </Text>
+            <Text style={styles.quantityText}>
+              {ownedItem?.quantity ?? 0}
+            </Text>
 
-        <Text style={styles.resultSubtitle}>
-          {scanResult.name}
-        </Text>
+            <TouchableOpacity
+              style={styles.quantityButton}
+              onPress={() => {
+                if (alreadyOwned) {
+                  increment(scanResult.id);
+                } else {
+                  addScan(scanResult.id);
 
-<View style={styles.quantityRow}>
-  <TouchableOpacity
-    style={styles.quantityButton}
-    onPress={() => {
-      if (alreadyOwned) {
-        decrement(scanResult.id);
-      }
-    }}
-    disabled={!alreadyOwned}
-  >
-    <Ionicons
-      name="remove"
-      size={20}
-      color={alreadyOwned ? "#111827" : "#9CA3AF"}
-    />
-  </TouchableOpacity>
+                  if (hapticsEnabled) {
+                    Haptics.notificationAsync(
+                      Haptics.NotificationFeedbackType.Success
+                    );
+                  }
+                }
+              }}
+            >
+              <Ionicons
+                name="add"
+                size={20}
+                color="#111827"
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </>
+    ) : (
+      <>
+        <Ionicons
+          name="close-circle"
+          size={48}
+          color="#FF5252"
+        />
 
-  <Text style={styles.quantityText}>
-    {ownedItem?.quantity ?? 0}
-  </Text>
+        <View style={styles.resultInfo}>
+          <Text
+            style={styles.resultTitle}
+            numberOfLines={2}
+          >
+            Unknown Minifigure
+          </Text>
 
-  <TouchableOpacity
-    style={styles.quantityButton}
-    onPress={() => {
-      if (alreadyOwned) {
-        increment(scanResult.id);
-      } else {
-        addScan(scanResult.id);
-
-        if (hapticsEnabled) {
-          Haptics.notificationAsync(
-            Haptics.NotificationFeedbackType.Success
-          );
-        }
-      }
-    }}
-  >
-    <Ionicons
-      name="add"
-      size={20}
-      color="#111827"
-    />
-  </TouchableOpacity>
-</View>
-      </View>
-    </>
-  ) : (
-    <>
-      <Ionicons
-        name="close-circle"
-        size={48}
-        color="#FF5252"
-      />
-
-      <View style={styles.resultInfo}>
-        <Text
-          style={styles.resultTitle}
-          numberOfLines={2}
-        >
-          Unknown Minifigure
-        </Text>
-
-        <Text style={styles.resultCode}>
-          Data Matrix: {scannedCode}
-        </Text>
-      </View>
-    </>
-  )}
-</View>
-        )}
+          <Text style={styles.resultCode}>
+            Data Matrix: {scannedCode}
+          </Text>
+        </View>
+      </>
+    )}
+  </View>
+)}
 
                 {/* ===========================
             Floating Controls
@@ -381,7 +343,7 @@ Minifigure codes.
 onPress={() => setShowSettings(true)}
   >
     <Ionicons
-      name="camera-outline"
+      name="ellipsis-vertical-circle-sharp"
       size={28}
       color="#FFF"
     />
@@ -395,12 +357,6 @@ onPress={() => setShowSettings(true)}
   setContinuousScan={setContinuousScan}
   haptics={hapticsEnabled}
   setHaptics={setHapticsEnabled}
-  keepAwake={keepAwake}
-  setKeepAwake={setKeepAwake}
-  flash={flashEnabled}
-  setFlash={setFlashEnabled}
-  zoom={zoom}
-  setZoom={setZoom}
 />
     </SafeAreaView>
   );

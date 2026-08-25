@@ -33,13 +33,14 @@
           "backgroundColor": "#061B4F",
 
           "ios": {
-            "image": "./assets/splash.png",
+            "image": "./assets/images/splash-ios-icon.png",
             "resizeMode": "contain",
             "enableFullScreenImage_legacy": true
           },
 
           "android": {
-            "image": "./assets/splash.png",
+            "image": "./assets/images/splash-android-icon.png",
+            "backgroundColor": "#010F33",
             "imageWidth": 200
           }
         }

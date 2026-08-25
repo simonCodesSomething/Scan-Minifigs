@@ -102,7 +102,7 @@ export const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: "#2563EB",
+    backgroundColor: "#FBBF24",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -297,7 +297,7 @@ export const styles = StyleSheet.create({
   progressBarFill: {
     height: "100%",
     borderRadius: 4,
-    backgroundColor: "#22C55E",
+    backgroundColor: "#FBBF24",
   },
 
   collectionStats: {

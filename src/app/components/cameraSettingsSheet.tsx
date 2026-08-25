@@ -1,12 +1,11 @@
-import Slider from "@react-native-community/slider";
 import React from "react";
 import {
-    Modal,
-    Pressable,
-    StyleSheet,
-    Switch,
-    Text,
-    View,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
 } from "react-native";
 
 type Props = {
@@ -18,106 +17,64 @@ type Props = {
 
   haptics: boolean;
   setHaptics: (value: boolean) => void;
-
-  keepAwake: boolean;
-  setKeepAwake: (value: boolean) => void;
-
-  flash: boolean;
-  setFlash: (value: boolean) => void;
-
-  zoom: number;
-  setZoom: (value: number) => void;
 };
 
-export default function cameraSettingsSheet({
+export default function ScanSettingsSheet({
   visible,
   onClose,
   continuousScan,
   setContinuousScan,
   haptics,
   setHaptics,
-  keepAwake,
-  setKeepAwake,
-  flash,
-  setFlash,
-  zoom,
-  setZoom,
 }: Props) {
   return (
     <Modal
       visible={visible}
       transparent
       animationType="slide"
+      onRequestClose={onClose}
     >
-      <Pressable
-        style={styles.backdrop}
-        onPress={onClose}
-      />
-
-      <View style={styles.sheet}>
-        <View style={styles.handle} />
-
-        <Text style={styles.title}>
-          Camera Settings
-        </Text>
-
-        <Text style={styles.section}>
-          Scanning
-        </Text>
-
-        <SettingRow
-          title="Continuous Scan"
-          value={continuousScan}
-          onValueChange={setContinuousScan}
+      <View style={styles.container}>
+        <Pressable
+          style={styles.backdrop}
+          onPress={onClose}
         />
 
-        <SettingRow
-          title="Haptic Feedback"
-          value={haptics}
-          onValueChange={setHaptics}
-        />
+        <View style={styles.sheet}>
+          <View style={styles.handle} />
 
-        <Text style={styles.section}>
-          Camera
-        </Text>
-
-        <SettingRow
-          title="Flash"
-          value={flash}
-          onValueChange={setFlash}
-        />
-
-        <SettingRow
-          title="Keep Screen Awake"
-          value={keepAwake}
-          onValueChange={setKeepAwake}
-        />
-
-        <View style={styles.zoomContainer}>
-          <Text style={styles.zoomTitle}>
-            Zoom
+          <Text style={styles.title}>
+            Scan Settings
           </Text>
 
-          <Slider
-            minimumValue={0}
-            maximumValue={1}
-            value={zoom}
-            onValueChange={setZoom}
+          <Text style={styles.section}>
+            Scanning
+          </Text>
+
+          <SettingRow
+            title="Continuous Scan"
+            subtitle="Keep scanning after each result"
+            value={continuousScan}
+            onValueChange={setContinuousScan}
           />
 
-          <Text style={styles.zoomValue}>
-            {(zoom * 5 + 1).toFixed(1)}x
-          </Text>
-        </View>
+          <SettingRow
+            title="Haptic Feedback"
+            subtitle="Vibrate when a code is detected"
 
-        <Pressable
-          style={styles.doneButton}
-          onPress={onClose}
-        >
-          <Text style={styles.doneText}>
-            Done
-          </Text>
-        </Pressable>
+            value={haptics}
+            onValueChange={setHaptics}
+          />
+
+          <Pressable
+            style={styles.doneButton}
+            onPress={onClose}
+          >
+            <Text style={styles.doneText}>
+              Done
+            </Text>
+          </Pressable>
+        </View>
       </View>
     </Modal>
   );
@@ -125,30 +82,48 @@ export default function cameraSettingsSheet({
 
 function SettingRow({
   title,
+  subtitle,
   value,
   onValueChange,
 }: {
   title: string;
+  subtitle: string;
   value: boolean;
   onValueChange: (value: boolean) => void;
 }) {
   return (
     <View style={styles.row}>
-      <Text style={styles.rowText}>
-        {title}
-      </Text>
+      <View style={styles.rowContent}>
+        <Text style={styles.rowText}>
+          {title}
+        </Text>
+
+        <Text style={styles.subtitle}>
+          {subtitle}
+        </Text>
+      </View>
 
       <Switch
         value={value}
         onValueChange={onValueChange}
+              trackColor={{
+            false: "#475569",
+          true: "#FBBF24",
+  }}
+        thumbColor="#FFFFFF"
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
+  container: {
     flex: 1,
+    justifyContent: "flex-end",
+  },
+
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.45)",
   },
 
@@ -156,7 +131,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#1E293B",
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    padding: 24,
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 28,
   },
 
   handle: {
@@ -169,7 +146,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    color: "white",
+    color: "#FFFFFF",
     fontSize: 22,
     fontWeight: "700",
     marginBottom: 20,
@@ -177,9 +154,12 @@ const styles = StyleSheet.create({
 
   section: {
     color: "#94A3B8",
-    marginTop: 12,
-    marginBottom: 10,
+    fontSize: 14,
     fontWeight: "700",
+    marginTop: 8,
+    marginBottom: 4,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
 
   row: {
@@ -189,35 +169,32 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
 
+  rowContent: {
+    flex: 1,
+    paddingRight: 20,
+  },
+
   rowText: {
-    color: "white",
+    color: "#FFFFFF",
     fontSize: 17,
+    fontWeight: "600",
   },
 
-  zoomContainer: {
-    marginTop: 18,
-  },
-
-  zoomTitle: {
-    color: "white",
-    fontSize: 17,
-    marginBottom: 8,
-  },
-
-  zoomValue: {
+  subtitle: {
     color: "#94A3B8",
-    alignSelf: "center",
+    fontSize: 13,
+    marginTop: 3,
   },
 
   doneButton: {
-    backgroundColor: "#2563EB",
+    backgroundColor: "#FBBF24",
     borderRadius: 14,
     marginTop: 28,
     paddingVertical: 16,
   },
 
   doneText: {
-    color: "white",
+    color: "#111827",
     textAlign: "center",
     fontWeight: "700",
     fontSize: 17,

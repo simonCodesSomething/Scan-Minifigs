@@ -211,7 +211,7 @@ return (
               <Ionicons
                 name="remove"
                 size={16}
-                color="white"
+                color="#1E293B"
               />
             </Pressable>
 
@@ -224,7 +224,7 @@ return (
               <Ionicons
                 name="add"
                 size={16}
-                color="white"
+                color="#1E293B"
               />
             </Pressable>
           </View>
