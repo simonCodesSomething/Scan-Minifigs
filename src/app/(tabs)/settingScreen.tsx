@@ -3,7 +3,8 @@ import { router } from "expo-router";
 import { Linking, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { styles } from "@/styles/settingScreen.styles";
+//import { styles } from "@/styles/settingScreen.styles";
+import { styles } from "@/styles/screens/settings.styles";
 
 export default function SettingsScreen() {
   const handleSupport = () => {

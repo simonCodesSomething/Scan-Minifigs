@@ -1,10 +1,14 @@
-import { colors } from "@/styles/global";
 import { StyleSheet } from "react-native";
+
+import { colors } from "@/styles/colors";
+import { spacing } from "@/styles/spacing";
+import { theme } from "@/styles/theme";
+import { typography } from "@/styles/typography";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
   },
 
   /* ---------- Permission ---------- */
@@ -13,37 +17,34 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 32,
+    paddingHorizontal: spacing.xxxl,
     backgroundColor: colors.background,
   },
 
   permissionTitle: {
-    fontSize: 24,
-    fontWeight: "700",
+    ...typography.title,
     color: colors.text,
-    marginBottom: 12,
+    marginBottom: spacing.md,
     textAlign: "center",
   },
 
   permissionText: {
-    fontSize: 16,
+    ...typography.body,
     color: colors.textSecondary,
     textAlign: "center",
-    lineHeight: 24,
     marginBottom: 28,
   },
 
   permissionButton: {
     backgroundColor: colors.primary,
     paddingHorizontal: 30,
-    paddingVertical: 14,
-    borderRadius: 30,
+    paddingVertical: spacing.md + 2,
+    borderRadius: theme.radius.round,
   },
 
   permissionButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "700",
+    ...typography.bodyBold,
+    color: colors.white,
   },
 
   /* ---------- Camera ---------- */
@@ -61,10 +62,11 @@ export const styles = StyleSheet.create({
   /* ---------- Header ---------- */
 
   header: {
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
     paddingTop: 60,
-    paddingBottom: 20,
+    paddingBottom: spacing.xl,
   },
+
   headerTopRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -72,37 +74,37 @@ export const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 30,
-    fontWeight: "700",
-    color: "#FFF",
+    ...typography.title,
+    color: colors.white,
   },
 
   subtitle: {
-    marginTop: 4,
-    fontSize: 15,
-    color: "#AAA",
+    ...typography.caption,
+    color: colors.textMuted,
   },
+
   statusBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#1E293B",
+    backgroundColor: colors.surfaceCardDark,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 20,
+    borderRadius: theme.radius.round,
   },
 
   statusDot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
-    marginRight: 8,
+    borderRadius: theme.radius.round,
+    marginRight: spacing.sm,
   },
 
   statusText: {
-    color: "#FFF",
-    fontSize: 12,
+    ...typography.smallMedium,
+    color: colors.white,
     fontWeight: "600",
   },
+
   /* ---------- Scan Frame ---------- */
 
   scanFrame: {
@@ -116,8 +118,8 @@ export const styles = StyleSheet.create({
     height: 45,
     borderTopWidth: 5,
     borderLeftWidth: 5,
-    borderColor: "#FBBF24",
-    borderTopLeftRadius: 12,
+    borderColor: colors.primary,
+    borderTopLeftRadius: theme.radius.md,
   },
 
   cornerTopRight: {
@@ -127,8 +129,8 @@ export const styles = StyleSheet.create({
     height: 45,
     borderTopWidth: 5,
     borderRightWidth: 5,
-    borderColor: "#FBBF24",
-    borderTopRightRadius: 12,
+    borderColor: colors.primary,
+    borderTopRightRadius: theme.radius.md,
   },
 
   cornerBottomLeft: {
@@ -138,8 +140,8 @@ export const styles = StyleSheet.create({
     height: 45,
     borderBottomWidth: 5,
     borderLeftWidth: 5,
-    borderColor: "#FBBF24",
-    borderBottomLeftRadius: 12,
+    borderColor: colors.primary,
+    borderBottomLeftRadius: theme.radius.md,
   },
 
   cornerBottomRight: {
@@ -150,8 +152,8 @@ export const styles = StyleSheet.create({
     height: 45,
     borderBottomWidth: 5,
     borderRightWidth: 5,
-    borderColor: "#FBBF24",
-    borderBottomRightRadius: 12,
+    borderColor: colors.primary,
+    borderBottomRightRadius: theme.radius.md,
   },
 
   /* ---------- Floating Controls ---------- */
@@ -159,8 +161,8 @@ export const styles = StyleSheet.create({
   controls: {
     position: "absolute",
     bottom: 36,
-    left: 20,
-    right: 20,
+    left: spacing.xl,
+    right: spacing.xl,
 
     flexDirection: "row",
     justifyContent: "space-between",
@@ -170,10 +172,8 @@ export const styles = StyleSheet.create({
   controlButton: {
     width: 56,
     height: 56,
-    borderRadius: 28,
-
-    backgroundColor: "rgba(15,23,42,0.85)",
-
+    borderRadius: theme.radius.round,
+    backgroundColor: colors.cameraControlOverlay,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -181,17 +181,19 @@ export const styles = StyleSheet.create({
   scanButton: {
     width: 84,
     height: 84,
-    borderRadius: 42,
+    borderRadius: theme.radius.round,
     backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
+
+    shadowColor: colors.black,
     shadowOpacity: 0.4,
     shadowRadius: 12,
     shadowOffset: {
       width: 0,
       height: 6,
     },
+
     elevation: 12,
   },
 
@@ -200,14 +202,14 @@ export const styles = StyleSheet.create({
   resultCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#1E293B", // <-- keep this
-    borderRadius: 16, // <-- keep this
-    borderWidth: 1,
-    borderColor: "#334155",
-    paddingHorizontal: 12,
+    backgroundColor: colors.surfaceCardDark,
+    borderRadius: theme.radius.lg,
+    borderWidth: theme.borderWidth.thin,
+    borderColor: colors.surfaceIcon,
+    paddingHorizontal: spacing.md,
     paddingVertical: 10,
-    marginHorizontal: 20,
-    marginBottom: 20,
+    marginHorizontal: spacing.xl,
+    marginBottom: spacing.xl,
     marginTop: 60,
     minHeight: 96,
   },
@@ -215,36 +217,35 @@ export const styles = StyleSheet.create({
   resultImage: {
     width: 72,
     height: 72,
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
+    backgroundColor: colors.white,
+    borderRadius: theme.radius.md,
   },
 
   resultInfo: {
     flex: 1,
-    marginLeft: 16,
+    marginLeft: spacing.lg,
     justifyContent: "center",
     alignItems: "center",
   },
 
   resultTitle: {
-    color: "#FFF",
-    fontSize: 18,
-    fontWeight: "700",
+    ...typography.subheading,
+    color: colors.white,
     textAlign: "center",
   },
 
   resultSubtitle: {
-    color: "#94A3B8",
-    fontSize: 14,
+    ...typography.caption,
+    color: colors.textSecondaryOnDark,
     textAlign: "center",
     marginTop: 2,
     marginBottom: 10,
   },
 
   resultCode: {
-    marginTop: 8,
-    fontSize: 14,
-    color: "#00E676",
+    marginTop: spacing.sm,
+    ...typography.caption,
+    color: colors.scanCode,
     fontFamily: "monospace",
   },
 
@@ -253,33 +254,35 @@ export const styles = StyleSheet.create({
   instructions: {
     position: "absolute",
     bottom: 255,
-    left: 32,
-    right: 32,
+    left: spacing.xxxl,
+    right: spacing.xxxl,
     textAlign: "center",
-    color: "#FFFFFF",
+    color: colors.white,
     fontSize: 15,
     lineHeight: 22,
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: colors.cameraInstructionOverlay,
     paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 12,
+    paddingHorizontal: spacing.lg,
+    borderRadius: theme.radius.md,
   },
+
+  /* ---------- Collection ---------- */
+
   addButton: {
     marginTop: 0,
-    backgroundColor: "#FBBF24",
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    backgroundColor: colors.primary,
+    borderRadius: theme.radius.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: spacing.sm,
   },
 
   addButtonText: {
-    color: "#111827",
-    fontSize: 16,
-    fontWeight: "700",
+    ...typography.bodyBold,
+    color: colors.textOnPrimary,
   },
 
   collectionRow: {
@@ -290,44 +293,45 @@ export const styles = StyleSheet.create({
   },
 
   collectionText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "600",
+    ...typography.captionMedium,
+    color: colors.white,
   },
 
   addCircleButton: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: "#FBBF24",
+    borderRadius: theme.radius.round,
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
+
   quantityRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
+
   ownedText: {
-    color: "#FFFFFF",
-    fontSize: 15,
-    fontWeight: "600",
+    ...typography.captionMedium,
+    color: colors.white,
   },
 
   quantityButton: {
     width: 34,
     height: 34,
-    borderRadius: 17,
-    backgroundColor: "#FBBF24",
+    borderRadius: theme.radius.round,
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
+
   quantityText: {
     width: 42,
     textAlign: "center",
     fontSize: 24,
     fontWeight: "700",
-    color: "#FFF",
-    marginHorizontal: 12,
+    color: colors.white,
+    marginHorizontal: spacing.md,
   },
 });

@@ -3,7 +3,8 @@ import { router } from "expo-router";
 import { Alert, Linking, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { styles } from "@/styles/about.styles";
+//import { styles } from "@/styles/about.styles";
+import { styles } from "@/styles/screens/about.styles";
 
 export default function AboutScreen() {
   const handleSupport = async () => {

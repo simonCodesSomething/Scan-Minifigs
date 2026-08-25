@@ -1,14 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import {
-    Pressable,
-    ScrollView,
-    Text,
-    View,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { styles } from "@/styles/about.styles";
+//import { styles } from "@/styles/about.styles";
+import { styles } from "@/styles/screens/privacyPolicy.styles";
 
 export default function PrivacyPolicyScreen() {
   return (

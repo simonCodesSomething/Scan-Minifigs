@@ -13,7 +13,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useCollectionStore } from "@/store/collectionStore";
-import { styles } from "@/styles/scanScreen.styles";
+//import { styles } from "@/styles/scanScreen.styles";
+import { styles } from "@/styles/screens/scan.styles";
 
 
 import { Minifigure } from "@/models/minifigure";

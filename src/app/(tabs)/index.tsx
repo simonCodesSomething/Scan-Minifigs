@@ -1,8 +1,8 @@
 import { useCollectionStore } from "@/store/collectionStore";
 import { useMinifigureStore } from "@/store/minifigureStore";
 
-import { styles } from "@/styles/index.styles";
-
+//import { styles } from "@/styles/index.styles";
+import { styles } from "@/styles/screens/home.styles";
 import {
   Ionicons,
   MaterialCommunityIcons,

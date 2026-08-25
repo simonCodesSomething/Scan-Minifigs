@@ -14,7 +14,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useCollectionStore } from "@/store/collectionStore";
 import { useMinifigureStore } from "@/store/minifigureStore";
 
-import { styles } from "@/styles/seriesScreen.styles";
+//import { styles } from "@/styles/seriesScreen.styles";
+import { styles } from "@/styles/screens/series.styles";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";

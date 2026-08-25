@@ -1,6 +1,6 @@
-import { styles } from "@/styles/seriesDetailScreen.styles";
+//import { styles } from "@/styles/seriesDetailScreen.styles";
+import { styles } from "@/styles/screens/seriesDetail.styles";
 import { Ionicons } from "@expo/vector-icons";
-
 
 import {
   ActivityIndicator,
