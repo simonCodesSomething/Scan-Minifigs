@@ -6,8 +6,9 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { Minifigure } from "@/models/minifigure";
 
 import {
-    DataMatrixMapping,
-    fetchMinifigureCatalog,
+  DataMatrixMapping,
+  fetchCatalogUpdatedAt,
+  fetchMinifigureCatalog,
 } from "@/services/minifigureService";
 
 type MinifigureState = {
@@ -18,6 +19,8 @@ type MinifigureState = {
   loading: boolean;
 
   loaded: boolean;
+
+  catalogUpdatedAt: string | null;
 
   error: string | null;
 
@@ -39,14 +42,17 @@ export const useMinifigureStore = create<MinifigureState>()(
 
       loaded: false,
 
+      catalogUpdatedAt: null,
+
       error: null,
 
       loadMinifigures: async () => {
         /*
-         * Don't make another request if
-         * the catalog is already loaded.
+         * Prevent multiple simultaneous requests.
          */
-        if (get().loaded || get().loading) {
+        if (get().loading) {
+          console.log("⏭️ Minifigure catalog is already loading.");
+
           return;
         }
 
@@ -56,8 +62,69 @@ export const useMinifigureStore = create<MinifigureState>()(
         });
 
         try {
+          console.log("🔎 Checking for minifigure catalog updates...");
+
+          /*
+           * Get the timestamp from Supabase.
+           *
+           * This is a very small request and avoids
+           * downloading the entire catalog unnecessarily.
+           */
+          const serverUpdatedAt = await fetchCatalogUpdatedAt();
+
+          const localUpdatedAt = get().catalogUpdatedAt;
+
+          console.log("📅 Local catalog:", localUpdatedAt);
+
+          console.log("📅 Server catalog:", serverUpdatedAt);
+
+          /*
+           * If we already have a catalog and the timestamps
+           * match, there is nothing to download.
+           */
+          if (
+            get().loaded &&
+            get().minifigures.length > 0 &&
+            get().dataMatrix.length > 0 &&
+            localUpdatedAt === serverUpdatedAt
+          ) {
+            console.log("✅ Catalog is already up to date.");
+
+            set({
+              loading: false,
+              error: null,
+            });
+
+            return;
+          }
+
+          /*
+           * Either:
+           *
+           * - This is the first launch
+           * - The catalog was cleared
+           * - The server catalog has changed
+           * - Cached data is incomplete
+           */
+          console.log("🔄 Catalog update detected. Downloading catalog...");
+
           const { minifigures, dataMatrix } = await fetchMinifigureCatalog();
 
+          /*
+           * Don't mark the catalog as loaded if Supabase
+           * returned empty data.
+           */
+          if (minifigures.length === 0 || dataMatrix.length === 0) {
+            throw new Error(
+              `Catalog download returned incomplete data. ` +
+                `Minifigures: ${minifigures.length}, ` +
+                `Data Matrix mappings: ${dataMatrix.length}`,
+            );
+          }
+
+          /*
+           * Save the new catalog and the server timestamp.
+           */
           set({
             minifigures,
 
@@ -67,14 +134,18 @@ export const useMinifigureStore = create<MinifigureState>()(
 
             loaded: true,
 
+            catalogUpdatedAt: serverUpdatedAt,
+
             error: null,
           });
 
-          console.log(`Loaded ${minifigures.length} ` + `minifigures.`);
+          console.log(`✅ Loaded ${minifigures.length} minifigures.`);
 
-          console.log(`Loaded ${dataMatrix.length} ` + `Data Matrix mappings.`);
+          console.log(`✅ Loaded ${dataMatrix.length} Data Matrix mappings.`);
+
+          console.log(`✅ Catalog synchronized at ${serverUpdatedAt}.`);
         } catch (error) {
-          console.error("Failed to load minifigure catalog:", error);
+          console.error("❌ Failed to load minifigure catalog:", error);
 
           set({
             loading: false,
@@ -94,20 +165,39 @@ export const useMinifigureStore = create<MinifigureState>()(
       lookupDataMatrix: (code: string) => {
         const normalizedCode = code.trim();
 
+        console.log("Lookup Data Matrix Code:", normalizedCode);
+
         const mapping = get().dataMatrix.find(
           (item) => item.code === normalizedCode,
         );
 
         if (!mapping) {
+          console.log("❌ No Data Matrix mapping found.");
+
           return undefined;
         }
 
-        return get().minifigures.find(
+        const minifigure = get().minifigures.find(
           (figure) => figure.id === mapping.minifigure_id,
         );
+
+        if (!minifigure) {
+          console.log(
+            "❌ Data Matrix mapping found, but minifigure was not found:",
+            mapping.minifigure_id,
+          );
+
+          return undefined;
+        }
+
+        console.log("✅ Data Matrix matched:", minifigure.name);
+
+        return minifigure;
       },
 
       clearMinifigures: () => {
+        console.log("🗑️ Clearing cached minifigure catalog.");
+
         set({
           minifigures: [],
 
@@ -116,6 +206,8 @@ export const useMinifigureStore = create<MinifigureState>()(
           loaded: false,
 
           loading: false,
+
+          catalogUpdatedAt: null,
 
           error: null,
         });
@@ -128,9 +220,11 @@ export const useMinifigureStore = create<MinifigureState>()(
       storage: createJSONStorage(() => AsyncStorage),
 
       /*
-       * Persist the catalog so the app
-       * doesn't need to download it every
-       * time the app starts.
+       * Persist the catalog so the app doesn't need
+       * to download it every time it starts.
+       *
+       * catalogUpdatedAt lets us determine whether
+       * the cached catalog is still current.
        */
       partialize: (state) => ({
         minifigures: state.minifigures,
@@ -138,6 +232,8 @@ export const useMinifigureStore = create<MinifigureState>()(
         dataMatrix: state.dataMatrix,
 
         loaded: state.loaded,
+
+        catalogUpdatedAt: state.catalogUpdatedAt,
       }),
     },
   ),
