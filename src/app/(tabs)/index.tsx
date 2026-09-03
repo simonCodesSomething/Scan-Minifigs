@@ -414,8 +414,7 @@ export default function Index() {
                 styles.placeholderText
               }
             >
-              Series 29 • Series 28 •
-              Series 27
+Shrek Series now supported.
             </Text>
 
           </View>
