@@ -3,7 +3,7 @@
     "name": "Scan-Minifigs",
     "slug": "scan-minifigs",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "scanminifigs",
     "userInterfaceStyle": "automatic",
@@ -12,6 +12,8 @@
       "bundleIdentifier": "com.simonreact.scanminifigs"
     },
     "android": {
+      "versionCode": 3,
+      "version": "1.0.2",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/icon.png"
@@ -21,6 +23,7 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.simonreact.scanminifigs"
     },
+
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png"
