@@ -3,7 +3,7 @@
     "name": "Scan-Minifigs",
     "slug": "scan-minifigs",
     "version": "1.0.0",
-    "orientation": "default",
+    "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "scanminifigs",
     "userInterfaceStyle": "automatic",
@@ -12,8 +12,6 @@
       "bundleIdentifier": "com.simonreact.scanminifigs"
     },
     "android": {
-      "versionCode": 3,
-      "version": "1.0.2",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/icon.png"
@@ -23,7 +21,6 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.simonreact.scanminifigs"
     },
-
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png"
@@ -33,18 +30,10 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#061B4F",
-
-          "ios": {
-            "image": "./assets/images/splash-ios-icon.png",
-            "resizeMode": "contain",
-            "enableFullScreenImage_legacy": true
-          },
-
+          "backgroundColor": "#208AEF",
           "android": {
-            "image": "./assets/images/splash-android-icon.png",
-            "backgroundColor": "#010F33",
-            "imageWidth": 200
+            "image": "./assets/images/splash-icon.png",
+            "imageWidth": 76
           }
         }
       ],

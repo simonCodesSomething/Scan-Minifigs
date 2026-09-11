@@ -1,6 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as MailComposer from "expo-mail-composer";
 import { router } from "expo-router";
-import { Alert, Linking, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  Alert,
+  Linking,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 //import { styles } from "@/styles/about.styles";
@@ -17,7 +26,7 @@ export default function AboutScreen() {
     }
   };
 const handleReportCode = async () => {
-  const email = "info@scan-minifigs.com";
+  const email = "developersims@icloud.com";
   const subject = "New Scan Minifigs Data Matrix Code";
   const body =
     "Data Matrix Code:\n\n" +
@@ -29,6 +38,30 @@ const handleReportCode = async () => {
   )}&body=${encodeURIComponent(body)}`;
 
   try {
+    if (Platform.OS === "ios") {
+      const available = await MailComposer.isAvailableAsync();
+
+      if (!available) {
+        Alert.alert(
+          "Email Not Available",
+          `Please configure an email account on this device to send the code to ${email}.`
+        );
+        return;
+      }
+
+      await MailComposer.composeAsync({
+        recipients: [email],
+        subject,
+        body,
+      });
+      return;
+    }
+
+    if (Platform.OS === "android") {
+      await Linking.openURL(url);
+      return;
+    }
+
     const supported = await Linking.canOpenURL(url);
 
     if (supported) {
