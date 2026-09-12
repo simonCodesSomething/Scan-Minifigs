@@ -30,18 +30,17 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>App Info</Text>
+        <Text style={styles.subtitle}>
+          Manage your Minifigure Scanner app.
+        </Text>
+      </View>
+
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>App Info</Text>
-          <Text style={styles.subtitle}>
-            Manage your Minifigure Scanner app.
-          </Text>
-        </View>
-
         {/* Support */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Support</Text>

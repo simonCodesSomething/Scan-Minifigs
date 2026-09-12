@@ -11,28 +11,29 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.backgroundDark,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
   },
 
   content: {
-    padding: spacing.xl,
+    paddingTop: 0,
     paddingBottom: spacing.huge,
   },
 
   // ---------- Header ----------
 
   header: {
-    marginTop: spacing.sm,
-    marginBottom: spacing.xxl + 4,
+    marginBottom: spacing.lg,
   },
 
   title: {
-    ...typography.display,
+    fontSize: 30,
     fontWeight: "800",
     color: colors.textOnDark,
   },
 
   subtitle: {
-    marginTop: spacing.xs + 2,
+    marginTop: spacing.xs,
     fontSize: 17,
     color: colors.textSecondaryOnDark,
     lineHeight: 24,

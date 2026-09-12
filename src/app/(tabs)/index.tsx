@@ -140,6 +140,16 @@ export default function Index() {
     <SafeAreaView
       style={styles.container}
     >
+      <View style={styles.header}>
+        <Text style={styles.title}>
+          Scan Minifigs
+        </Text>
+
+        <Text style={styles.subtitle}>
+          Discover what's inside
+          before you open it.
+        </Text>
+      </View>
 
       <ScrollView
         contentContainerStyle={
@@ -149,30 +159,6 @@ export default function Index() {
           false
         }
       >
-
-        {/* Header */}
-
-        <View
-          style={styles.header}
-        >
-
-          <Text
-            style={styles.title}
-          >
-            Scan Minifigs
-          </Text>
-
-
-          <Text
-            style={styles.subtitle}
-          >
-            Discover what's inside
-            before you open it.
-          </Text>
-
-        </View>
-
-
         {/* Scan Button */}
 
 {/* Scan */}

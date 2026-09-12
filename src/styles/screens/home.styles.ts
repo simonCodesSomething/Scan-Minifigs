@@ -9,28 +9,31 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.backgroundDark,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
   },
 
   content: {
-    padding: spacing.xl,
-    paddingBottom: spacing.huge,
+    flexGrow: 1,
+    paddingTop: spacing.md,
+    paddingBottom: 0,
   },
 
   // Header
   header: {
-    marginTop: spacing.sm,
-    marginBottom: spacing.xxl,
+    marginBottom: spacing.lg,
   },
 
   title: {
-    ...typography.display,
-    color: colors.textOnDark,
+    fontSize: 30,
     fontWeight: "800",
+    color: colors.textOnDark,
   },
 
   subtitle: {
-    marginTop: spacing.xs + 2,
-    ...typography.body,
+    marginTop: spacing.xs,
+    fontSize: 17,
+    lineHeight: 24,
     color: colors.textSecondaryOnDark,
   },
 

@@ -1,12 +1,13 @@
 import React from "react";
 import {
-  Modal,
-  Pressable,
-  StyleSheet,
-  Switch,
-  Text,
-  View,
+    Modal,
+    Pressable,
+    StyleSheet,
+    Switch,
+    Text,
+    View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   visible: boolean;
@@ -27,6 +28,8 @@ export default function ScanSettingsSheet({
   haptics,
   setHaptics,
 }: Props) {
+  const insets = useSafeAreaInsets();
+
   return (
     <Modal
       visible={visible}
@@ -40,7 +43,14 @@ export default function ScanSettingsSheet({
           onPress={onClose}
         />
 
-        <View style={styles.sheet}>
+        <View
+          style={[
+            styles.sheet,
+            {
+              paddingBottom: Math.max(insets.bottom, 16),
+            },
+          ]}
+        >
           <View style={styles.handle} />
 
           <Text style={styles.title}>
