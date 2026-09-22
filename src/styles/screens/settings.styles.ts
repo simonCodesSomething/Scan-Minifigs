@@ -61,6 +61,10 @@ export const styles = StyleSheet.create({
     padding: spacing.lg + 2,
   },
 
+  ratingCard: {
+    marginTop: spacing.md,
+  },
+
   supportIcon: {
     width: 52,
     height: 52,

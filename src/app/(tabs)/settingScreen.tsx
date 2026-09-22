@@ -74,6 +74,33 @@ export default function SettingsScreen() {
               color="#64748B"
             />
           </Pressable>
+
+          <Pressable
+            onPress={() =>
+              Linking.openURL(
+                "https://play.google.com/store/apps/details?id=com.simonreact.scanminifigs",
+              )
+            }
+            style={({ pressed }) => [
+              styles.supportCard,
+              styles.ratingCard,
+              pressed && styles.pressed,
+            ]}
+          >
+            <View style={styles.supportIcon}>
+              <Ionicons name="star-outline" size={25} color="#FBBF24" />
+            </View>
+
+            <View style={styles.supportInfo}>
+              <Text style={styles.supportTitle}>Rate Scan-Minifigs</Text>
+
+              <Text style={styles.supportSubtitle}>
+                Share your feedback on Google Play.
+              </Text>
+            </View>
+
+            <Ionicons name="chevron-forward" size={22} color="#64748B" />
+          </Pressable>
         </View>
 
         {/* About */}
