@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Image,
   Text,
@@ -19,7 +19,7 @@ import { styles } from "@/styles/screens/scan.styles";
 
 import { Minifigure } from "@/models/minifigure";
 import { useMinifigureStore } from "@/store/minifigureStore";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "expo-router";
 import CameraSettingsSheet from "../components/cameraSettingsSheet";
 
 
