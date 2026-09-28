@@ -45,7 +45,8 @@
       "expo-font",
       "expo-image",
       "expo-mail-composer",
-      "expo-status-bar"
+      "expo-status-bar",
+      "expo-iap"
     ],
     "experiments": {
       "typedRoutes": true,

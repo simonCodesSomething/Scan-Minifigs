@@ -1,3 +1,4 @@
+
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import {
@@ -8,7 +9,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-//import { styles } from "@/styles/about.styles";
 import { styles } from "@/styles/screens/privacyPolicy.styles";
 
 export default function PrivacyPolicyScreen() {
@@ -71,7 +71,7 @@ export default function PrivacyPolicyScreen() {
           </Text>
 
           <Text style={styles.cardText}>
-            Last updated: August 2026
+            Last updated: September 2026
           </Text>
         </View>
 
@@ -204,7 +204,7 @@ export default function PrivacyPolicyScreen() {
             <Text style={styles.cardText}>
               We do not intentionally collect your name, email
               address, phone number, home address, or payment card
-              information through the app.
+              information directly through the app.
             </Text>
 
             <Text style={styles.cardText}>
@@ -302,8 +302,17 @@ export default function PrivacyPolicyScreen() {
 
             <Text style={styles.cardText}>
               These services may include Supabase for application
-              data hosting and Buy Me a Coffee for optional
-              financial support.
+              data hosting and Google Play services for distributing
+              the app and processing optional in-app support
+              purchases.
+            </Text>
+
+            <Text style={styles.cardText}>
+              Google Play may process information associated with
+              purchases, such as transaction and billing
+              information, in accordance with Google's applicable
+              privacy policies and terms. Scan Minifigs does not
+              receive or store your payment card information.
             </Text>
 
             <Text style={styles.cardText}>
@@ -313,43 +322,38 @@ export default function PrivacyPolicyScreen() {
           </View>
         </View>
 
-        {/* Buy Me a Coffee */}
+        {/* Optional Support */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
             Optional Support
           </Text>
 
-  <View style={styles.card}>
-  <Text style={styles.cardText}>
-    Scan Minifigs may provide a link to Buy Me a Coffee so
-    users can voluntarily support the development and
-    maintenance of the app.
-  </Text>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>
+              Scan Minifigs may offer an optional in-app support
+              purchase through Google Play Billing.
+            </Text>
 
-  <Text style={styles.cardText}>
-    If you choose to make a contribution, you will be
-    redirected to Buy Me a Coffee. Any payment, account,
-    billing, or other information you provide through
-    Buy Me a Coffee is handled by Buy Me a Coffee and its
-    payment providers, and is not collected or stored by
-    Scan Minifigs.
-  </Text>
+            <Text style={styles.cardText}>
+              If you choose to make a support purchase, the
+              transaction is processed through Google Play. Scan
+              Minifigs does not collect or store your payment card
+              information.
+            </Text>
 
-  <Text style={styles.cardText}>
-    Buy Me a Coffee is a third-party service. Your use of
-    that service, including any payments or account
-    information you provide, is subject to Buy Me a Coffee's
-    own terms, privacy policy, and other applicable policies.
-  </Text>
+            <Text style={styles.cardText}>
+              Information associated with the transaction may be
+              processed by Google Play in accordance with Google's
+              applicable privacy policy, terms, and payment
+              processing practices.
+            </Text>
 
-  <Text style={styles.cardText}>
-    Contributions are voluntary and are not required to use
-    Scan Minifigs or any of its features. Making a
-    contribution does not purchase additional features,
-    content, or services within the app unless explicitly
-    stated otherwise.
-  </Text>
-</View>
+            <Text style={styles.cardText}>
+              Support purchases are voluntary and are not required
+              to use Scan Minifigs or its core scanning, collection,
+              or browsing features.
+            </Text>
+          </View>
         </View>
 
         {/* Data Security */}
@@ -406,8 +410,9 @@ export default function PrivacyPolicyScreen() {
             </Text>
 
             <Text style={styles.cardText}>
-              You can also choose whether to use optional support
-              services such as Buy Me a Coffee.
+              You can also choose whether to make an optional
+              support purchase through Google Play. Support is not
+              required to use the app's core features.
             </Text>
           </View>
         </View>
@@ -466,3 +471,4 @@ export default function PrivacyPolicyScreen() {
     </SafeAreaView>
   );
 }
+

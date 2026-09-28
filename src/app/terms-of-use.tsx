@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-//import { styles } from "@/styles/about.styles";
 import { styles } from "@/styles/screens/terms.styles";
 
 export default function TermsOfUseScreen() {
@@ -71,7 +70,7 @@ export default function TermsOfUseScreen() {
           </Text>
 
           <Text style={styles.cardText}>
-            Last updated: August 2026
+            Last updated: September 2026
           </Text>
         </View>
 
@@ -124,110 +123,131 @@ export default function TermsOfUseScreen() {
         </View>
 
         {/* Scanner */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            Scanner
+          </Text>
 
-{/* Scanner */}
-<View style={styles.section}>
-  <Text style={styles.sectionTitle}>
-    Scanner
-  </Text>
+          <View style={styles.infoCard}>
+            <Ionicons
+              name="scan-outline"
+              size={24}
+              color="#FBBF24"
+            />
 
-  <View style={styles.infoCard}>
-    <Ionicons
-      name="scan-outline"
-      size={24}
-      color="#FBBF24"
-    />
+            <View style={styles.infoContent}>
+              <Text style={styles.infoTitle}>
+                Data Matrix Scanning
+              </Text>
 
-    <View style={styles.infoContent}>
-      <Text style={styles.infoTitle}>
-        Data Matrix Scanning
-      </Text>
+              <Text style={styles.infoText}>
+                The scanner uses your device camera to read
+                supported Data Matrix codes found on compatible
+                Minifigure packaging. Scanning and identification
+                are available only for supported Minifigures and
+                production runs.
+              </Text>
+            </View>
+          </View>
 
-      <Text style={styles.infoText}>
-        The scanner uses your device camera to read supported
-        Data Matrix codes found on compatible Minifigure
-        packaging. Scanning and identification are available
-        only for supported Minifigures and production runs.
-      </Text>
-    </View>
-  </View>
+          <View style={styles.infoCard}>
+            <Ionicons
+              name="information-circle-outline"
+              size={24}
+              color="#A855F7"
+            />
 
-  <View style={styles.infoCard}>
-    <Ionicons
-      name="information-circle-outline"
-      size={24}
-      color="#A855F7"
-    />
+            <View style={styles.infoContent}>
+              <Text style={styles.infoTitle}>
+                Scanning Availability
+              </Text>
 
-    <View style={styles.infoContent}>
-      <Text style={styles.infoTitle}>
-        Scanning Availability
-      </Text>
+              <Text style={styles.infoText}>
+                Series 25 Minifigures are supported for scanning
+                from mid-production onward, where compatible Data
+                Matrix codes are present. Minifigures from
+                supported series produced after Series 25 may also
+                be scanned when compatible codes are available.
+              </Text>
+            </View>
+          </View>
 
-      <Text style={styles.infoText}>
-        Series 25 Minifigures are supported for scanning from
-        mid-production onward, where compatible Data Matrix
-        codes are present. Minifigures from supported series
-        produced after Series 25 may also be scanned when
-        compatible codes are available.
-      </Text>
-    </View>
-  </View>
+          <View style={styles.infoCard}>
+            <Ionicons
+              name="list-outline"
+              size={24}
+              color="#22C55E"
+            />
 
-  <View style={styles.infoCard}>
-    <Ionicons
-      name="list-outline"
-      size={24}
-      color="#22C55E"
-    />
+            <View style={styles.infoContent}>
+              <Text style={styles.infoTitle}>
+                Collection Lists
+              </Text>
 
-    <View style={styles.infoContent}>
-      <Text style={styles.infoTitle}>
-        Collection Lists
-      </Text>
+              <Text style={styles.infoText}>
+                Earlier Minifigures and production runs that do not
+                have supported Data Matrix codes may still be
+                included in the app as collection lists. These
+                Minifigures cannot be identified through the
+                scanner.
+              </Text>
+            </View>
+          </View>
 
-      <Text style={styles.infoText}>
-        Earlier Minifigures and production runs that do not have
-        supported Data Matrix codes may still be included in the
-        app as collection lists. These Minifigures cannot be
-        identified through the scanner.
-      </Text>
-    </View>
-  </View>
+          <View style={styles.infoCard}>
+            <Ionicons
+              name="warning-outline"
+              size={24}
+              color="#F97316"
+            />
 
-  <View style={styles.infoCard}>
-    <Ionicons
-      name="warning-outline"
-      size={24}
-      color="#F97316"
-    />
+            <View style={styles.infoContent}>
+              <Text style={styles.infoTitle}>
+                No Guarantee of Results
+              </Text>
 
-    <View style={styles.infoContent}>
-      <Text style={styles.infoTitle}>
-        No Guarantee of Results
-      </Text>
-
-      <Text style={styles.infoText}>
-        Scan results may be unavailable, incorrect, or
-        unsupported. Scanner functionality and supported
-        Minifigures may change as new series, production runs,
-        and Data Matrix codes are added.
-      </Text>
-    </View>
-  </View>
-</View>
-
-{/* Reporting New Codes */} 
-<View style={styles.section}> 
-  <Text style={styles.sectionTitle}> Reporting New Codes </Text> 
-  <View style={styles.card}> 
-    <Text style={styles.cardText}> Users may have the option to report previously unrecognized Data Matrix codes to help improve and expand Scan Minifigs' scanning support. </Text> 
-    <Text style={styles.cardText}> Reported codes may be reviewed and added to the app's catalog when they can be verified and associated with a supported Minifigure. </Text>
-     <Text style={styles.cardText}> Submitting a code does not guarantee that it will be added to the catalog or that a particular Minifigure will become supported for scanning. </Text>
-      <Text style={styles.cardText}> Users should not submit personal, confidential, or otherwise sensitive information when reporting a code. </Text>
-       </View>
+              <Text style={styles.infoText}>
+                Scan results may be unavailable, incorrect, or
+                unsupported. Scanner functionality and supported
+                Minifigures may change as new series, production
+                runs, and Data Matrix codes are added.
+              </Text>
+            </View>
+          </View>
         </View>
 
+        {/* Reporting New Codes */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            Reporting New Codes
+          </Text>
+
+          <View style={styles.card}>
+            <Text style={styles.cardText}>
+              Users may have the option to report previously
+              unrecognized Data Matrix codes to help improve and
+              expand Scan Minifigs' scanning support.
+            </Text>
+
+            <Text style={styles.cardText}>
+              Reported codes may be reviewed and added to the
+              app's catalog when they can be verified and
+              associated with a supported Minifigure.
+            </Text>
+
+            <Text style={styles.cardText}>
+              Submitting a code does not guarantee that it will be
+              added to the catalog or that a particular Minifigure
+              will become supported for scanning.
+            </Text>
+
+            <Text style={styles.cardText}>
+              Users should not submit personal, confidential, or
+              otherwise sensitive information when reporting a
+              code.
+            </Text>
+          </View>
+        </View>
 
         {/* Catalog */}
         <View style={styles.section}>
@@ -290,7 +310,7 @@ export default function TermsOfUseScreen() {
           </View>
         </View>
 
-        {/* Third Party Services */}
+        {/* Third-Party Services */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
             Third-Party Services
@@ -303,14 +323,16 @@ export default function TermsOfUseScreen() {
             </Text>
 
             <Text style={styles.cardText}>
-              These services currently include Supabase for hosting
-              application catalog data and Buy Me a Coffee for
-              optional financial support.
+              These services currently include Supabase for
+              hosting application catalog data and Google Play
+              services for distributing the app and processing
+              optional in-app support purchases.
             </Text>
 
             <Text style={styles.cardText}>
               Your use of third-party services may be subject to
-              their respective terms and policies.
+              their respective terms, privacy policies, and other
+              applicable policies.
             </Text>
           </View>
         </View>
@@ -347,9 +369,8 @@ export default function TermsOfUseScreen() {
 
           <View style={styles.card}>
             <Text style={styles.cardText}>
-              Scan Minifigs may provide a link to Buy Me a Coffee
-              so users can voluntarily support development of the
-              app.
+              Scan Minifigs may offer an optional support purchase
+              through Google Play Billing.
             </Text>
 
             <Text style={styles.cardText}>
@@ -358,9 +379,15 @@ export default function TermsOfUseScreen() {
             </Text>
 
             <Text style={styles.cardText}>
-              Any payment or financial transaction made through
-              Buy Me a Coffee is subject to Buy Me a Coffee's
-              terms and the terms of its payment providers.
+              Support purchases are processed through Google Play
+              and are subject to Google's applicable terms,
+              policies, and payment processing practices.
+            </Text>
+
+            <Text style={styles.cardText}>
+              A support purchase does not provide access to
+              features or content that are otherwise unavailable
+              unless explicitly stated in the app.
             </Text>
           </View>
         </View>
@@ -535,3 +562,4 @@ export default function TermsOfUseScreen() {
     </SafeAreaView>
   );
 }
+

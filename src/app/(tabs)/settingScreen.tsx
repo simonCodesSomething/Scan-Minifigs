@@ -1,37 +1,71 @@
+import { styles } from "@/styles/screens/settings.styles";
 import { Ionicons } from "@expo/vector-icons";
+import { useIAP } from "expo-iap";
 import { router } from "expo-router";
 import { Linking, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-//import { styles } from "@/styles/settingScreen.styles";
-import { styles } from "@/styles/screens/settings.styles";
-
 export default function SettingsScreen() {
-  const handleSupport = () => {
-    // TODO: Add Buy Me a Coffee URL later
-    console.log("Support Minifigure Scanner");
+
+  const SUPPORT_PRODUCT_ID = "support_scan_minifigs_199";
+
+  const {
+    connected,
+    requestPurchase,
+    finishTransaction,
+  } = useIAP({
+    onPurchaseSuccess: async (purchase) => {
+      try {
+        await finishTransaction({
+          purchase,
+          isConsumable: true,
+        });
+      } catch (error) {
+        console.error("Failed to finish support purchase:", error);
+      }
+    },
+    onPurchaseError: (error) => {
+      console.error("Support purchase failed:", error);
+    },
+  });
+
+  const handleSupport = async () => {
+    try {
+      if (!connected) {
+        console.log("Google Play Billing is not connected.");
+        return;
+      }
+
+      await requestPurchase({
+        request: {
+          google: {
+            skus: [SUPPORT_PRODUCT_ID],
+          },
+        },
+        type: "in-app",
+      });
+    } catch (error) {
+      console.error("Support purchase failed:", error);
+    }
   };
 
   const handleAbout = () => {
     router.push("/about");
-    console.log("About");
   };
 
   const handlePrivacy = () => {
-    // TODO: Add Privacy Policy
     router.push("/privacy-policy");
-    console.log("Privacy Policy");
   };
 
   const handleTerms = () => {
     router.push("/terms-of-use");
-    console.log("Terms");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>App Info</Text>
+
         <Text style={styles.subtitle}>
           Manage your Minifigure Scanner app.
         </Text>
@@ -46,16 +80,18 @@ export default function SettingsScreen() {
           <Text style={styles.sectionTitle}>Support</Text>
 
           <Pressable
-            onPress={() => Linking.openURL("https://buymeacoffee.com/scan.minifigs")}
+            onPress={handleSupport}
             style={({ pressed }) => [
               styles.supportCard,
               pressed && styles.pressed,
-              
             ]}
-             
           >
             <View style={styles.supportIcon}>
-              <Text style={styles.coffeeEmoji}>☕</Text>
+              <Ionicons
+                name="heart-outline"
+                size={25}
+                color="#FBBF24"
+              />
             </View>
 
             <View style={styles.supportInfo}>
@@ -64,7 +100,7 @@ export default function SettingsScreen() {
               </Text>
 
               <Text style={styles.supportSubtitle}>
-                Help keep the app updated with new LEGO series.
+                Support continued development for $1.99.
               </Text>
             </View>
 
@@ -88,18 +124,28 @@ export default function SettingsScreen() {
             ]}
           >
             <View style={styles.supportIcon}>
-              <Ionicons name="star-outline" size={25} color="#FBBF24" />
+              <Ionicons
+                name="star-outline"
+                size={25}
+                color="#FBBF24"
+              />
             </View>
 
             <View style={styles.supportInfo}>
-              <Text style={styles.supportTitle}>Rate Scan-Minifigs</Text>
+              <Text style={styles.supportTitle}>
+                Rate Scan-Minifigs
+              </Text>
 
               <Text style={styles.supportSubtitle}>
                 Share your feedback on Google Play.
               </Text>
             </View>
 
-            <Ionicons name="chevron-forward" size={22} color="#64748B" />
+            <Ionicons
+              name="chevron-forward"
+              size={22}
+              color="#64748B"
+            />
           </Pressable>
         </View>
 
@@ -149,7 +195,9 @@ export default function SettingsScreen() {
                 />
               </View>
 
-              <Text style={styles.menuText}>Privacy Policy</Text>
+              <Text style={styles.menuText}>
+                Privacy Policy
+              </Text>
 
               <Ionicons
                 name="chevron-forward"
@@ -189,3 +237,4 @@ export default function SettingsScreen() {
     </SafeAreaView>
   );
 }
+

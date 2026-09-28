@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useIAP } from "expo-iap";
 import * as MailComposer from "expo-mail-composer";
 import { router } from "expo-router";
 import {
@@ -12,75 +13,108 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-//import { styles } from "@/styles/about.styles";
 import { styles } from "@/styles/screens/about.styles";
 
 export default function AboutScreen() {
-  const handleSupport = async () => {
-    const url = "https://buymeacoffee.com/scan.minifigs";
+
+  const SUPPORT_PRODUCT_ID = "support_scan_minifigs_199";
+
+  const {
+    connected,
+    requestPurchase,
+    finishTransaction,
+  } = useIAP({
+    onPurchaseSuccess: async (purchase) => {
+      try {
+        await finishTransaction({
+          purchase,
+          isConsumable: true,
+        });
+      } catch (error) {
+        console.error("Failed to finish support purchase:", error);
+      }
+    },
+    onPurchaseError: (error) => {
+      console.error("Support purchase failed:", error);
+    },
+  });
+  
+const handleSupport = async () => {
+  try {
+    if (!connected) {
+      console.log("Google Play Billing is not connected.");
+      return;
+    }
+
+    await requestPurchase({
+      request: {
+        google: {
+          skus: [SUPPORT_PRODUCT_ID],
+        },
+      },
+      type: "in-app",
+    });
+  } catch (error) {
+    console.error("Support purchase failed:", error);
+  }
+};
+
+  const handleReportCode = async () => {
+    const email = "developersims@icloud.com";
+    const subject = "New Scan Minifigs Data Matrix Code";
+    const body =
+      "Data Matrix Code:\n\n" +
+      "Series:\n\n" +
+      "Minifigure:\n\n";
+
+    const url = `mailto:${email}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
 
     try {
-      await Linking.openURL(url);
-    } catch (error) {
-      console.error("Unable to open support page:", error);
-    }
-  };
-const handleReportCode = async () => {
-  const email = "developersims@icloud.com";
-  const subject = "New Scan Minifigs Data Matrix Code";
-  const body =
-    "Data Matrix Code:\n\n" +
-    "Series:\n\n" +
-    "Minifigure:\n\n";
+      if (Platform.OS === "ios") {
+        const available = await MailComposer.isAvailableAsync();
 
-  const url = `mailto:${email}?subject=${encodeURIComponent(
-    subject
-  )}&body=${encodeURIComponent(body)}`;
+        if (!available) {
+          Alert.alert(
+            "Email Not Available",
+            `Please configure an email account on this device to send the code to ${email}.`
+          );
+          return;
+        }
 
-  try {
-    if (Platform.OS === "ios") {
-      const available = await MailComposer.isAvailableAsync();
-
-      if (!available) {
-        Alert.alert(
-          "Email Not Available",
-          `Please configure an email account on this device to send the code to ${email}.`
-        );
+        await MailComposer.composeAsync({
+          recipients: [email],
+          subject,
+          body,
+        });
         return;
       }
 
-      await MailComposer.composeAsync({
-        recipients: [email],
-        subject,
-        body,
-      });
-      return;
-    }
+      if (Platform.OS === "android") {
+        await Linking.openURL(url);
+        return;
+      }
 
-    if (Platform.OS === "android") {
-      await Linking.openURL(url);
-      return;
-    }
+      const supported = await Linking.canOpenURL(url);
 
-    const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert(
+          "Email Not Available",
+          `No email app is available on this device. You can send the code to ${email}.`
+        );
+      }
+    } catch (error) {
+      console.error("Unable to open email:", error);
 
-    if (supported) {
-      await Linking.openURL(url);
-    } else {
       Alert.alert(
-        "Email Not Available",
-        `No email app is available on this device. You can send the code to ${email}.`
+        "Unable to Open Email",
+        `Please send the code to ${email}.`
       );
     }
-  } catch (error) {
-    console.error("Unable to open email:", error);
-
-    Alert.alert(
-      "Unable to Open Email",
-      `Please send the code to ${email}.`
-    );
-  }
-};
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -128,15 +162,26 @@ const handleReportCode = async () => {
             Scan Minifigs
           </Text>
 
-<Text style={styles.cardText}>Scan Minifigs is an independent collector tool designed to help you identify and keep track of your LEGO Minifigure collection. </Text>
- <Text style={styles.cardText}>
-  Scanning is supported for Series 25 figures with supported
-  Data Matrix codes, generally from mid-production onward, as
-  well as supported series produced after Series 25. Earlier
-  figures and production runs without supported codes are
-  provided as collection lists only.
-</Text>
- <Text style={styles.cardText}>Scan supported minifigure Data Matrix codes to quickly identify figures, browse supported series, and keep track of the Minifigures you have discovered. </Text>
+          <Text style={styles.cardText}>
+            Scan Minifigs is an independent collector tool designed
+            to help you identify and keep track of your LEGO
+            Minifigure collection.
+          </Text>
+
+          <Text style={styles.cardText}>
+            Scanning is supported for Series 25 figures with
+            supported Data Matrix codes, generally from
+            mid-production onward, as well as supported series
+            produced after Series 25. Earlier figures and
+            production runs without supported codes are provided
+            as collection lists only.
+          </Text>
+
+          <Text style={styles.cardText}>
+            Scan supported minifigure Data Matrix codes to quickly
+            identify figures, browse supported series, and keep
+            track of the Minifigures you have discovered.
+          </Text>
         </View>
 
         {/* What We Do */}
@@ -217,57 +262,58 @@ const handleReportCode = async () => {
             </View>
           </View>
         </View>
+
         {/* Help Improve Scanning */}
-<View style={styles.section}>
-  <Text style={styles.sectionTitle}>
-    Help Improve Scanning
-  </Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            Help Improve Scanning
+          </Text>
 
-  <View style={styles.card}>
-    <View style={styles.iconContainer}>
-      <Ionicons
-        name="mail-outline"
-        size={32}
-        color="#FFFFFF"
-      />
-    </View>
+          <View style={styles.card}>
+            <View style={styles.iconContainer}>
+              <Ionicons
+                name="mail-outline"
+                size={32}
+                color="#FFFFFF"
+              />
+            </View>
 
-    <Text style={styles.cardTitle}>
-      Found a New Code?
-    </Text>
+            <Text style={styles.cardTitle}>
+              Found a New Code?
+            </Text>
 
-    <Text style={styles.cardText}>
-      Found a Data Matrix code that Scan Minifigs does not
-      recognize? You can help expand scanning support by
-      sending the code to us.
-    </Text>
+            <Text style={styles.cardText}>
+              Found a Data Matrix code that Scan Minifigs does not
+              recognize? You can help expand scanning support by
+              sending the code to us.
+            </Text>
 
-    <Text style={styles.cardText}>
-      If possible, include the scanned code along with the
-      Minifigure series and figure name. Submitted codes may
-      be reviewed and added to the catalog to help support
-      future scans.
-    </Text>
+            <Text style={styles.cardText}>
+              If possible, include the scanned code along with the
+              Minifigure series and figure name. Submitted codes
+              may be reviewed and added to the catalog to help
+              support future scans.
+            </Text>
 
-    <Pressable
-      onPress={handleReportCode}
-      style={({ pressed }) => [
-        styles.supportButton,
-        pressed && styles.supportButtonPressed,
-      ]}
-    >
-      <Ionicons
-        name="mail-outline"
-        size={20}
-        color="#111827"
-      />
+            <Pressable
+              onPress={handleReportCode}
+              style={({ pressed }) => [
+                styles.supportButton,
+                pressed && styles.supportButtonPressed,
+              ]}
+            >
+              <Ionicons
+                name="mail-outline"
+                size={20}
+                color="#111827"
+              />
 
-      <Text style={styles.supportButtonText}>
-        Send New Code
-      </Text>
-    </Pressable>
-  </View>
-</View>
+              <Text style={styles.supportButtonText}>
+                Send New Code
+              </Text>
+            </Pressable>
+          </View>
+        </View>
 
         {/* Support */}
         <View style={styles.section}>
@@ -295,10 +341,9 @@ const handleReportCode = async () => {
             </Text>
 
             <Text style={styles.cardText}>
-              If you find the app useful, you can leave an optional
-              tip to support continued development, maintenance,
-              and the addition of support for more Minifigure
-              series.
+              If you find the app useful, you can optionally
+              support continued development, maintenance, and the
+              addition of support for more Minifigure series.
             </Text>
 
             <Pressable
@@ -309,13 +354,13 @@ const handleReportCode = async () => {
               ]}
             >
               <Ionicons
-                name="cafe-outline"
+                name="heart-outline"
                 size={20}
                 color="#111827"
               />
 
               <Text style={styles.supportButtonText}>
-                Leave a Tip
+                Support for $1.99
               </Text>
             </Pressable>
           </View>
@@ -334,7 +379,7 @@ const handleReportCode = async () => {
             </Text>
 
             <Text style={styles.versionNumber}>
-              Version 1.0.0
+              Version 1.0.8
             </Text>
           </View>
 
