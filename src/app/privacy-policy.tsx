@@ -303,55 +303,12 @@ export default function PrivacyPolicyScreen() {
             <Text style={styles.cardText}>
               These services may include Supabase for application
               data hosting and Google Play services for distributing
-              the app and processing optional in-app support
-              purchases.
-            </Text>
-
-            <Text style={styles.cardText}>
-              Google Play may process information associated with
-              purchases, such as transaction and billing
-              information, in accordance with Google's applicable
-              privacy policies and terms. Scan Minifigs does not
-              receive or store your payment card information.
+              the app.
             </Text>
 
             <Text style={styles.cardText}>
               Third-party services operate under their own privacy
               policies and terms.
-            </Text>
-          </View>
-        </View>
-
-        {/* Optional Support */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Optional Support
-          </Text>
-
-          <View style={styles.card}>
-            <Text style={styles.cardText}>
-              Scan Minifigs may offer an optional in-app support
-              purchase through Google Play Billing.
-            </Text>
-
-            <Text style={styles.cardText}>
-              If you choose to make a support purchase, the
-              transaction is processed through Google Play. Scan
-              Minifigs does not collect or store your payment card
-              information.
-            </Text>
-
-            <Text style={styles.cardText}>
-              Information associated with the transaction may be
-              processed by Google Play in accordance with Google's
-              applicable privacy policy, terms, and payment
-              processing practices.
-            </Text>
-
-            <Text style={styles.cardText}>
-              Support purchases are voluntary and are not required
-              to use Scan Minifigs or its core scanning, collection,
-              or browsing features.
             </Text>
           </View>
         </View>
@@ -407,12 +364,6 @@ export default function PrivacyPolicyScreen() {
               You can choose whether to grant camera permission.
               Without camera permission, the scanning functionality
               will not be available.
-            </Text>
-
-            <Text style={styles.cardText}>
-              You can also choose whether to make an optional
-              support purchase through Google Play. Support is not
-              required to use the app's core features.
             </Text>
           </View>
         </View>

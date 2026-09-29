@@ -325,8 +325,7 @@ export default function TermsOfUseScreen() {
             <Text style={styles.cardText}>
               These services currently include Supabase for
               hosting application catalog data and Google Play
-              services for distributing the app and processing
-              optional in-app support purchases.
+              services for distributing the app.
             </Text>
 
             <Text style={styles.cardText}>
@@ -357,37 +356,6 @@ export default function TermsOfUseScreen() {
             <Text style={styles.cardText}>
               Supabase is a third-party service and its services
               are subject to Supabase's own terms and policies.
-            </Text>
-          </View>
-        </View>
-
-        {/* Optional Support */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Optional Support
-          </Text>
-
-          <View style={styles.card}>
-            <Text style={styles.cardText}>
-              Scan Minifigs may offer an optional support purchase
-              through Google Play Billing.
-            </Text>
-
-            <Text style={styles.cardText}>
-              Support is completely optional and is not required
-              to use the core functionality of Scan Minifigs.
-            </Text>
-
-            <Text style={styles.cardText}>
-              Support purchases are processed through Google Play
-              and are subject to Google's applicable terms,
-              policies, and payment processing practices.
-            </Text>
-
-            <Text style={styles.cardText}>
-              A support purchase does not provide access to
-              features or content that are otherwise unavailable
-              unless explicitly stated in the app.
             </Text>
           </View>
         </View>
