@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useIAP } from "expo-iap";
 import * as MailComposer from "expo-mail-composer";
 import { router } from "expo-router";
 import {
@@ -15,6 +16,49 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "@/styles/screens/about.styles";
 
 export default function AboutScreen() {
+
+  const SUPPORT_PRODUCT_ID = "support_scan_minifigs_199";
+
+  const {
+    connected,
+    requestPurchase,
+    finishTransaction,
+  } = useIAP({
+    onPurchaseSuccess: async (purchase) => {
+      try {
+        await finishTransaction({
+          purchase,
+          isConsumable: true,
+        });
+      } catch (error) {
+        console.error("Failed to finish support purchase:", error);
+      }
+    },
+    onPurchaseError: (error) => {
+      console.error("Support purchase failed:", error);
+    },
+  });
+  
+const handleSupport = async () => {
+  try {
+    if (!connected) {
+      console.log("Google Play Billing is not connected.");
+      return;
+    }
+
+    await requestPurchase({
+      request: {
+        google: {
+          skus: [SUPPORT_PRODUCT_ID],
+        },
+      },
+      type: "in-app",
+    });
+  } catch (error) {
+    console.error("Support purchase failed:", error);
+  }
+};
+
   const handleReportCode = async () => {
     const email = "developersims@icloud.com";
     const subject = "New Scan Minifigs Data Matrix Code";
@@ -271,6 +315,57 @@ export default function AboutScreen() {
           </View>
         </View>
 
+        {/* Support */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            Support the App
+          </Text>
+
+          <View style={styles.card}>
+            <View style={styles.iconContainer}>
+              <Ionicons
+                name="heart-outline"
+                size={32}
+                color="#FFFFFF"
+              />
+            </View>
+
+            <Text style={styles.cardTitle}>
+              Enjoying Scan Minifigs?
+            </Text>
+
+            <Text style={styles.cardText}>
+              Scan Minifigs is made for collectors who want a
+              simple way to identify and keep track of their
+              Minifigures.
+            </Text>
+
+            <Text style={styles.cardText}>
+              If you find the app useful, you can optionally
+              support continued development, maintenance, and the
+              addition of support for more Minifigure series.
+            </Text>
+
+            <Pressable
+              onPress={handleSupport}
+              style={({ pressed }) => [
+                styles.supportButton,
+                pressed && styles.supportButtonPressed,
+              ]}
+            >
+              <Ionicons
+                name="heart-outline"
+                size={20}
+                color="#111827"
+              />
+
+              <Text style={styles.supportButtonText}>
+                Support for $1.99
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+
         {/* App Information */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
@@ -284,13 +379,15 @@ export default function AboutScreen() {
             </Text>
 
             <Text style={styles.versionNumber}>
-              Version 1.0.10
+              Version 1.0.8
             </Text>
           </View>
 
           {/* Privacy Policy */}
           <Pressable
-            onPress={() => router.push("/privacy-policy")}
+            onPress={() =>
+              router.push("/privacy-policy")
+            }
             style={({ pressed }) => [
               styles.infoCard,
               styles.privacyPolicyCard,
@@ -322,7 +419,9 @@ export default function AboutScreen() {
 
           {/* Terms of Use */}
           <Pressable
-            onPress={() => router.push("/terms-of-use")}
+            onPress={() =>
+              router.push("/terms-of-use")
+            }
             style={({ pressed }) => [
               styles.infoCard,
               pressed && { opacity: 0.7 },
