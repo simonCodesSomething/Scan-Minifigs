@@ -1,131 +1,135 @@
-
 import { Ionicons } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as Haptics from "expo-haptics";
-import { router } from "expo-router";
+import { router, useIsFocused } from "expo-router";
 import { useState } from "react";
 import {
   Image,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { Minifigure } from "@/models/minifigure";
 import { useCollectionStore } from "@/store/collectionStore";
-//import { styles } from "@/styles/scanScreen.styles";
+import { useMinifigureStore } from "@/store/minifigureStore";
 import { styles } from "@/styles/screens/scan.styles";
 
-
-import { Minifigure } from "@/models/minifigure";
-import { useMinifigureStore } from "@/store/minifigureStore";
-import { useIsFocused } from "expo-router";
 import CameraSettingsSheet from "../components/cameraSettingsSheet";
 
-
 export default function ScanScreen() {
-  const [permission, requestPermission] = useCameraPermissions();
+  const [permission, requestPermission] =
+    useCameraPermissions();
+
   const isFocused = useIsFocused();
 
   const addScan = useCollectionStore(
     (state) => state.addScan
   );
 
-const [showSettings, setShowSettings] = useState(false);
-const [continuousScan, setContinuousScan] = useState(true);
-const [hapticsEnabled, setHapticsEnabled] = useState(true);
-const [keepAwake, setKeepAwake] = useState(true);
-const [zoom, setZoom] = useState(0);
+  const collection = useCollectionStore(
+    (state) => state.collection
+  );
 
-  
-  //const [scanned, setScanned] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [lastScannedCode, setLastScannedCode] = useState("");
+  const addScanToHistory = useCollectionStore(
+    (state) => state.addScanToHistory
+  );
+
+  const increment = useCollectionStore(
+    (state) => state.increment
+  );
+
+  const decrement = useCollectionStore(
+    (state) => state.decrement
+  );
+
+  const lookupDataMatrix = useMinifigureStore(
+    (state) => state.lookupDataMatrix
+  );
+
+  const [showSettings, setShowSettings] =
+    useState(false);
+
+  const [continuousScan, setContinuousScan] =
+    useState(true);
+
+  const [hapticsEnabled, setHapticsEnabled] =
+    useState(true);
 
   const [flashEnabled, setFlashEnabled] =
     useState(false);
 
+  const [lastScannedCode, setLastScannedCode] =
+    useState("");
+
   const [scannedCode, setScannedCode] =
     useState("");
 
-const [scanResult, setScanResult] = useState<Minifigure | null>(null);
- const collection = useCollectionStore((state) => state.collection);
- const addScanToHistory = useCollectionStore(
-  (state) => state.addScanToHistory
-);
-  
+  const [scanResult, setScanResult] =
+    useState<Minifigure | null>(null);
+
   const alreadyOwned =
-  scanResult &&
-  collection.some(item => item.id === scanResult.id);
+    scanResult != null &&
+    collection.some(
+      (item) => item.id === scanResult.id
+    );
 
   const ownedItem = collection.find(
-  item => item.id === scanResult?.id
-);
+    (item) => item.id === scanResult?.id
+  );
 
-  const increment = useCollectionStore(
-  state => state.increment
-);
-const decrement = useCollectionStore(
-  state => state.decrement
-);
-const lookupDataMatrix = useMinifigureStore(
-  (state) => state.lookupDataMatrix
-);
+  const onBarcodeScanned = ({
+    data,
+  }: {
+    data: string;
+  }) => {
+    const code = data.trim().split(/\s+/)[0];
 
-  /**
-   * Reset scanner
-   */
-  const resetScanner = () => {
-    setLastScannedCode("");
-    setScannedCode("");
-    setScanResult(null);
-    setLoading(false);
+    console.log("DATA MATRIX:", code);
+
+    if (code === lastScannedCode) {
+      return;
+    }
+
+    setLastScannedCode(code);
+    setScannedCode(code);
+
+    const result = lookupDataMatrix(code);
+
+    if (result) {
+      console.log("MINIFIGURE FOUND:", result.id);
+
+      setScanResult(result);
+
+      addScanToHistory(result.id);
+
+      if (hapticsEnabled) {
+        Haptics.notificationAsync(
+          Haptics.NotificationFeedbackType.Success
+        );
+      }
+    } else {
+      console.log("UNKNOWN DATA MATRIX:", code);
+
+      setScanResult(null);
+
+      if (hapticsEnabled) {
+        Haptics.notificationAsync(
+          Haptics.NotificationFeedbackType.Error
+        );
+      }
+    }
   };
 
-const onBarcodeScanned = ({
-  data,
-}: {
-  data: string;
-}) => {
-  const code = data.trim().split(/\s+/)[0];
-
-  console.log("code", code);
-
-  // Ignore the same code repeatedly while it remains in view
-  if (code === lastScannedCode) {
-    return;
-  }
-
-  setLastScannedCode(code);
-  setScannedCode(code);
-
-  const result = lookupDataMatrix(code);
-
-  if (result) {
-    // Update the UI immediately
-    setScanResult(result);
-
-    // Do secondary actions after updating the result
-    addScanToHistory(result.id);
-
-    if (hapticsEnabled) {
-      Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Success
-      );
-    }
-  } else {
-    setScanResult(null);
-
-    if (hapticsEnabled) {
-      Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Error
-      );
-    }
-  }
-};
+  const toggleFlash = () => {
+    setFlashEnabled((previous) => !previous);
+  };
 
   const openMinifigure = () => {
-    if (!scanResult) return;
+    if (!scanResult) {
+      return;
+    }
 
     router.push({
       pathname: "/(tabs)/SeriesDetails/[id]",
@@ -135,15 +139,15 @@ const onBarcodeScanned = ({
     });
   };
 
-  /**
-   * Toggle camera flash.
-   */
-  const toggleFlash = () => {
-    setFlashEnabled((prev) => !prev);
-  };
-
   if (!permission) {
-    return <View />;
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "black",
+        }}
+      />
+    );
   }
 
   if (!permission.granted) {
@@ -155,17 +159,15 @@ const onBarcodeScanned = ({
           </Text>
 
           <Text style={styles.permissionText}>
-We need camera access to scan LEGO
-Minifigure codes. 
+            We need camera access to scan LEGO
+            Minifigure codes.
           </Text>
 
           <TouchableOpacity
             style={styles.permissionButton}
             onPress={requestPermission}
           >
-            <Text
-              style={styles.permissionButtonText}
-            >
+            <Text style={styles.permissionButtonText}>
               Grant Permission
             </Text>
           </TouchableOpacity>
@@ -173,196 +175,208 @@ Minifigure codes.
       </SafeAreaView>
     );
   }
-    /**
-   * Look up a scanned QR code.
-   * Replace this with your Supabase lookup later if desired.
-   */
- 
-    return (
-    <SafeAreaView style={styles.container} edges={[]}>
-      {/* ===========================
-          Camera
-      =========================== */}
-      {isFocused ? (
-      <CameraView
-        style={styles.camera}
-        facing="back"
-        enableTorch={flashEnabled}
-        barcodeScannerSettings={{
-          barcodeTypes: ["datamatrix"],
+
+  return (
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "black",
+      }}
+    >
+      {/* CAMERA
+          Keep this exactly like the working test.
+      */}
+      {isFocused && (
+        <CameraView
+          style={{
+            flex: 1,
+          }}
+          facing="back"
+          enableTorch={flashEnabled}
+          barcodeScannerSettings={{
+            barcodeTypes: ["datamatrix"],
+          }}
+          onCameraReady={() => {
+            console.log("CAMERA READY");
+          }}
+          onMountError={(error) => {
+            console.error(
+              "CAMERA MOUNT ERROR:",
+              error
+            );
+          }}
+          onBarcodeScanned={onBarcodeScanned}
+        />
+      )}
+
+      {/* TRANSPARENT OVERLAY */}
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "transparent",
         }}
-        onBarcodeScanned={onBarcodeScanned}
-        
-      />) : null }
-
-      {/* ===========================
-          Overlay
-`      =========================== */}
-
-      <View style={styles.overlay}>
-
-        {/* Header */}
-
-        {/* ===========================
-            Scan Frame
-        =========================== */}
-
-        <View style={styles.scanFrame}>
-
+        pointerEvents="box-none"
+      >
+        {/* SCAN FRAME */}
+        <View
+          style={styles.scanFrame}
+          pointerEvents="none"
+        >
           <View style={styles.cornerTopLeft} />
-
           <View style={styles.cornerTopRight} />
-
           <View style={styles.cornerBottomLeft} />
-
           <View style={styles.cornerBottomRight} />
-
         </View>
 
-        {/* ===========================
-            Instructions
-        =========================== */}
+        {/* RESULT CARD */}
+        {(scanResult || scannedCode) && (
+          <View style={styles.resultCard}>
+            {scanResult ? (
+              <>
+                <Image
+                  source={{
+                    uri: scanResult.image,
+                  }}
+                  style={styles.resultImage}
+                  resizeMode="contain"
+                />
 
+                <View style={styles.resultInfo}>
+                  <Text
+                    style={styles.resultTitle}
+                    numberOfLines={2}
+                  >
+                    {scanResult.name}
+                  </Text>
 
-                {/* ===========================
-            Live Scan Result
-        =========================== */}
+                  <Text style={styles.resultSubtitle}>
+                    {scanResult.name}
+                  </Text>
 
-{(scanResult || scannedCode) && (
-  <View style={styles.resultCard}>
-    {scanResult ? (
-      <>
-        <Image
-          source={{ uri: scanResult.image }}
-          style={styles.resultImage}
-          resizeMode="contain"
-        />
+                  <View style={styles.quantityRow}>
+                    <TouchableOpacity
+                      style={styles.quantityButton}
+                      onPress={() => {
+                        if (alreadyOwned) {
+                          decrement(scanResult.id);
+                        }
+                      }}
+                      disabled={!alreadyOwned}
+                    >
+                      <Ionicons
+                        name="remove"
+                        size={20}
+                        color={
+                          alreadyOwned
+                            ? "#111827"
+                            : "#9CA3AF"
+                        }
+                      />
+                    </TouchableOpacity>
 
-        <View style={styles.resultInfo}>
-          <Text
-            style={styles.resultTitle}
-            numberOfLines={2}
-          >
-            {scanResult.name}
-          </Text>
+                    <Text style={styles.quantityText}>
+                      {ownedItem?.quantity ?? 0}
+                    </Text>
 
-          <Text style={styles.resultSubtitle}>
-            {scanResult.name}
-          </Text>
+                    <TouchableOpacity
+                      style={styles.quantityButton}
+                      onPress={() => {
+                        if (alreadyOwned) {
+                          increment(scanResult.id);
+                        } else {
+                          addScan(scanResult.id);
 
-          <View style={styles.quantityRow}>
-            <TouchableOpacity
-              style={styles.quantityButton}
-              onPress={() => {
-                if (alreadyOwned) {
-                  decrement(scanResult.id);
-                }
-              }}
-              disabled={!alreadyOwned}
-            >
-              <Ionicons
-                name="remove"
-                size={20}
-                color={alreadyOwned ? "#111827" : "#9CA3AF"}
-              />
-            </TouchableOpacity>
+                          if (hapticsEnabled) {
+                            Haptics.notificationAsync(
+                              Haptics.NotificationFeedbackType
+                                .Success
+                            );
+                          }
+                        }
+                      }}
+                    >
+                      <Ionicons
+                        name="add"
+                        size={20}
+                        color="#111827"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </>
+            ) : (
+              <>
+                <Ionicons
+                  name="close-circle"
+                  size={48}
+                  color="#FF5252"
+                />
 
-            <Text style={styles.quantityText}>
-              {ownedItem?.quantity ?? 0}
-            </Text>
+                <View style={styles.resultInfo}>
+                  <Text
+                    style={styles.resultTitle}
+                    numberOfLines={2}
+                  >
+                    Unknown Minifigure
+                  </Text>
 
-            <TouchableOpacity
-              style={styles.quantityButton}
-              onPress={() => {
-                if (alreadyOwned) {
-                  increment(scanResult.id);
-                } else {
-                  addScan(scanResult.id);
-
-                  if (hapticsEnabled) {
-                    Haptics.notificationAsync(
-                      Haptics.NotificationFeedbackType.Success
-                    );
-                  }
-                }
-              }}
-            >
-              <Ionicons
-                name="add"
-                size={20}
-                color="#111827"
-              />
-            </TouchableOpacity>
+                  <Text style={styles.resultCode}>
+                    Data Matrix: {scannedCode}
+                  </Text>
+                </View>
+              </>
+            )}
           </View>
-        </View>
-      </>
-    ) : (
-      <>
-        <Ionicons
-          name="close-circle"
-          size={48}
-          color="#FF5252"
-        />
+        )}
 
-        <View style={styles.resultInfo}>
-          <Text
-            style={styles.resultTitle}
-            numberOfLines={2}
+        {/* CONTROLS */}
+        <View style={styles.controls}>
+          <TouchableOpacity
+            style={styles.controlButton}
+            onPress={toggleFlash}
           >
-            Unknown Minifigure
-          </Text>
+            <Ionicons
+              name={
+                flashEnabled
+                  ? "flash"
+                  : "flash-off"
+              }
+              size={28}
+              color="#FFF"
+            />
+          </TouchableOpacity>
 
-          <Text style={styles.resultCode}>
-            Data Matrix: {scannedCode}
-          </Text>
+          <TouchableOpacity
+            style={styles.controlButton}
+            onPress={() =>
+              setShowSettings(true)
+            }
+          >
+            <Ionicons
+              name="ellipsis-vertical-circle-sharp"
+              size={28}
+              color="#FFF"
+            />
+          </TouchableOpacity>
         </View>
-      </>
-    )}
-  </View>
-)}
-
-                {/* ===========================
-            Floating Controls
-        =========================== */}
-
-<View style={styles.controls}>
-  {/* Flash */}
-  <TouchableOpacity
-    style={styles.controlButton}
-    onPress={toggleFlash}
-  >
-    <Ionicons
-      name={flashEnabled ? "flash" : "flash-off"}
-      size={28}
-      color="#FFF"
-    />
-  </TouchableOpacity>
-
-  {/* Camera Controls */}
-  <TouchableOpacity
-    style={styles.controlButton}
-onPress={() => setShowSettings(true)}
-  >
-    <Ionicons
-      name="ellipsis-vertical-circle-sharp"
-      size={28}
-      color="#FFF"
-    />
-  </TouchableOpacity>
-</View>
       </View>
-    <CameraSettingsSheet
-  visible={showSettings}
-  onClose={() => setShowSettings(false)}
-  continuousScan={continuousScan}
-  setContinuousScan={setContinuousScan}
-  haptics={hapticsEnabled}
-  setHaptics={setHapticsEnabled}
-/>
-    </SafeAreaView>
+
+      {/* SETTINGS */}
+      <CameraSettingsSheet
+        visible={showSettings}
+        onClose={() =>
+          setShowSettings(false)
+        }
+        continuousScan={continuousScan}
+        setContinuousScan={setContinuousScan}
+        haptics={hapticsEnabled}
+        setHaptics={setHapticsEnabled}
+      />
+    </View>
   );
 }
 
-function addScanToHistory(id: string) {
-  throw new Error("Function not implemented.");
-}

@@ -38,7 +38,8 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow Minifig Scan to access your camera to scan LEGO minifigure codes."
+          "cameraPermission": "Allow Minifig Scan to access your camera to scan LEGO minifigure codes.",
+          "barcodeScannerEnabled": true
         }
       ],
       "expo-web-browser",

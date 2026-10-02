@@ -50,11 +50,12 @@ export const styles = StyleSheet.create({
   /* ---------- Camera ---------- */
 
   camera: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
 
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
+    backgroundColor: "transparent",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -108,8 +109,13 @@ export const styles = StyleSheet.create({
   /* ---------- Scan Frame ---------- */
 
   scanFrame: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
     width: 260,
     height: 260,
+    marginLeft: -130,
+    marginTop: -130,
   },
 
   cornerTopLeft: {
@@ -200,6 +206,11 @@ export const styles = StyleSheet.create({
   /* ---------- Scan Result Card ---------- */
 
   resultCard: {
+    position: "absolute",
+    top: "50%",
+    left: spacing.xl,
+    right: spacing.xl,
+    marginTop: 145,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.surfaceCardDark,
@@ -208,9 +219,6 @@ export const styles = StyleSheet.create({
     borderColor: colors.surfaceIcon,
     paddingHorizontal: spacing.md,
     paddingVertical: 10,
-    marginHorizontal: spacing.xl,
-    marginBottom: spacing.xl,
-    marginTop: 60,
     minHeight: 96,
   },
 
