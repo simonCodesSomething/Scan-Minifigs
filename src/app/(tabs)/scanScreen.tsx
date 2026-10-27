@@ -43,7 +43,6 @@ export default function ScanScreen() {
   const decrement = useCollectionStore(
     (state) => state.decrement
   );
-
   const lookupDataMatrix = useMinifigureStore(
     (state) => state.lookupDataMatrix
   );
@@ -253,10 +252,6 @@ export default function ScanScreen() {
                     {scanResult.name}
                   </Text>
 
-                  <Text style={styles.resultSubtitle}>
-                    {scanResult.name}
-                  </Text>
-
                   <View style={styles.quantityRow}>
                     <TouchableOpacity
                       style={styles.quantityButton}
@@ -305,6 +300,7 @@ export default function ScanScreen() {
                         color="#111827"
                       />
                     </TouchableOpacity>
+
                   </View>
                 </View>
               </>

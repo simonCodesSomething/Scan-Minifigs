@@ -240,6 +240,7 @@ export const styles = StyleSheet.create({
     ...typography.subheading,
     color: colors.white,
     textAlign: "center",
+    marginBottom: 10,
   },
 
   resultSubtitle: {
@@ -318,6 +319,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    gap: 8,
   },
 
   ownedText: {
@@ -340,6 +342,5 @@ export const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "700",
     color: colors.white,
-    marginHorizontal: spacing.md,
   },
 });

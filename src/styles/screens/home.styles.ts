@@ -234,4 +234,25 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
   },
+
+  progressDivider: {
+    height: 1,
+    width: "100%",
+    backgroundColor: colors.borderDark,
+    marginTop: spacing.md,
+  },
+
+  favoritesCount: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: spacing.md,
+    gap: spacing.sm,
+  },
+
+  favoritesCountText: {
+    color: colors.textLightOnDark,
+    fontSize: 14,
+    fontWeight: "600",
+  },
 });

@@ -11,6 +11,9 @@ import {
   fetchMinifigureCatalog,
 } from "@/services/minifigureService";
 
+// Increment this whenever the locally cached catalog structure changes.
+const CATALOG_CACHE_VERSION = 2;
+
 type MinifigureState = {
   minifigures: Minifigure[];
 
@@ -21,6 +24,8 @@ type MinifigureState = {
   loaded: boolean;
 
   catalogUpdatedAt: string | null;
+
+  catalogCacheVersion: number;
 
   error: string | null;
 
@@ -44,6 +49,8 @@ export const useMinifigureStore = create<MinifigureState>()(
 
       catalogUpdatedAt: null,
 
+      catalogCacheVersion: 0,
+
       error: null,
 
       loadMinifigures: async () => {
@@ -52,7 +59,6 @@ export const useMinifigureStore = create<MinifigureState>()(
          */
         if (get().loading) {
           console.log("⏭️ Minifigure catalog is already loading.");
-
           return;
         }
 
@@ -65,28 +71,33 @@ export const useMinifigureStore = create<MinifigureState>()(
           console.log("🔎 Checking for minifigure catalog updates...");
 
           /*
-           * Get the timestamp from Supabase.
-           *
-           * This is a very small request and avoids
-           * downloading the entire catalog unnecessarily.
+           * Get the latest catalog timestamp from Supabase.
            */
           const serverUpdatedAt = await fetchCatalogUpdatedAt();
 
           const localUpdatedAt = get().catalogUpdatedAt;
+          const localCacheVersion = get().catalogCacheVersion;
+
+          const cacheVersionMatches =
+            localCacheVersion === CATALOG_CACHE_VERSION;
 
           console.log("📅 Local catalog:", localUpdatedAt);
-
           console.log("📅 Server catalog:", serverUpdatedAt);
+          console.log("📦 Local cache version:", localCacheVersion);
+          console.log("📦 Required cache version:", CATALOG_CACHE_VERSION);
 
           /*
-           * If we already have a catalog and the timestamps
-           * match, there is nothing to download.
+           * Reuse the cached catalog only when:
+           * - It is loaded and contains data.
+           * - Its timestamp matches Supabase.
+           * - Its cache version matches the current app.
            */
           if (
             get().loaded &&
             get().minifigures.length > 0 &&
             get().dataMatrix.length > 0 &&
-            localUpdatedAt === serverUpdatedAt
+            localUpdatedAt === serverUpdatedAt &&
+            cacheVersionMatches
           ) {
             console.log("✅ Catalog is already up to date.");
 
@@ -99,14 +110,17 @@ export const useMinifigureStore = create<MinifigureState>()(
           }
 
           /*
-           * Either:
-           *
-           * - This is the first launch
-           * - The catalog was cleared
-           * - The server catalog has changed
-           * - Cached data is incomplete
+           * Download when this is the first launch, the
+           * server catalog changed, cached data is incomplete,
+           * or the local catalog version is outdated.
            */
-          console.log("🔄 Catalog update detected. Downloading catalog...");
+          if (!cacheVersionMatches) {
+            console.log(
+              "🔄 Catalog cache version changed. Refreshing cached data.",
+            );
+          } else {
+            console.log("🔄 Catalog update detected. Downloading catalog...");
+          }
 
           const { minifigures, dataMatrix } = await fetchMinifigureCatalog();
 
@@ -123,33 +137,27 @@ export const useMinifigureStore = create<MinifigureState>()(
           }
 
           /*
-           * Save the new catalog and the server timestamp.
+           * Save the catalog, timestamp, and cache version.
            */
           set({
             minifigures,
-
             dataMatrix,
-
             loading: false,
-
             loaded: true,
-
             catalogUpdatedAt: serverUpdatedAt,
-
+            catalogCacheVersion: CATALOG_CACHE_VERSION,
             error: null,
           });
 
           console.log(`✅ Loaded ${minifigures.length} minifigures.`);
-
           console.log(`✅ Loaded ${dataMatrix.length} Data Matrix mappings.`);
-
           console.log(`✅ Catalog synchronized at ${serverUpdatedAt}.`);
+          console.log(`✅ Catalog cache version: ${CATALOG_CACHE_VERSION}.`);
         } catch (error) {
           console.error("❌ Failed to load minifigure catalog:", error);
 
           set({
             loading: false,
-
             error:
               error instanceof Error
                 ? error.message
@@ -159,8 +167,7 @@ export const useMinifigureStore = create<MinifigureState>()(
       },
 
       /*
-       * Find a minifigure using a
-       * scanned Data Matrix code.
+       * Find a minifigure using a scanned Data Matrix code.
        */
       lookupDataMatrix: (code: string) => {
         const normalizedCode = code.trim();
@@ -173,7 +180,6 @@ export const useMinifigureStore = create<MinifigureState>()(
 
         if (!mapping) {
           console.log("❌ No Data Matrix mapping found.");
-
           return undefined;
         }
 
@@ -186,7 +192,6 @@ export const useMinifigureStore = create<MinifigureState>()(
             "❌ Data Matrix mapping found, but minifigure was not found:",
             mapping.minifigure_id,
           );
-
           return undefined;
         }
 
@@ -200,15 +205,11 @@ export const useMinifigureStore = create<MinifigureState>()(
 
         set({
           minifigures: [],
-
           dataMatrix: [],
-
           loaded: false,
-
           loading: false,
-
           catalogUpdatedAt: null,
-
+          catalogCacheVersion: 0,
           error: null,
         });
       },
@@ -222,18 +223,13 @@ export const useMinifigureStore = create<MinifigureState>()(
       /*
        * Persist the catalog so the app doesn't need
        * to download it every time it starts.
-       *
-       * catalogUpdatedAt lets us determine whether
-       * the cached catalog is still current.
        */
       partialize: (state) => ({
         minifigures: state.minifigures,
-
         dataMatrix: state.dataMatrix,
-
         loaded: state.loaded,
-
         catalogUpdatedAt: state.catalogUpdatedAt,
+        catalogCacheVersion: state.catalogCacheVersion,
       }),
     },
   ),

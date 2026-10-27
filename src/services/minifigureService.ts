@@ -33,8 +33,6 @@ function getSupabaseHeaders() {
 
 /**
  * Fetch the catalog's last updated timestamp.
- *
- * This is intentionally a very small request.
  */
 export async function fetchCatalogUpdatedAt(): Promise<string> {
   if (!SUPABASE_URL) {
@@ -106,16 +104,15 @@ async function fetchMinifigures(): Promise<Minifigure[]> {
     throw new Error("Supabase returned invalid minifigure data.");
   }
 
-  return data.map(
-    (figure) =>
-      ({
-        id: figure.id,
-        seriesId: figure.seriesId,
-        Set: figure.Set,
-        name: figure.name,
-        image: figure.image,
-      }) as Minifigure,
-  );
+  const minifigures: Minifigure[] = data.map((figure) => ({
+    id: figure.id,
+    seriesId: figure.seriesId,
+    set: figure.Set ?? null,
+    name: figure.name,
+    image: figure.image,
+  }));
+
+  return minifigures;
 }
 
 /**

@@ -3,4 +3,5 @@ export interface Minifigure {
   seriesId: string;
   name: string;
   image: any;
+  set?: string | null;
 }

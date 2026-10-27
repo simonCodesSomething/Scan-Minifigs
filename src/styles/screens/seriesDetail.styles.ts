@@ -279,7 +279,9 @@ export const styles = StyleSheet.create({
   collectionHeader: {
     marginHorizontal: spacing.lg,
     marginBottom: spacing.xl,
-    padding: spacing.lg + 2,
+    paddingTop: spacing.lg + 2,
+    paddingHorizontal: spacing.lg + 2,
+    paddingBottom: 10,
     borderRadius: theme.radius.lg,
     backgroundColor: colors.surfaceCardDark,
   },
@@ -353,5 +355,54 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     color: colors.textMuted,
+  },
+  filterDivider: {
+    height: 1,
+    backgroundColor: "#334155",
+    marginTop: 10,
+    marginBottom: 10,
+    width: "100%",
+  },
+
+  filterContainer: {
+    flexDirection: "row",
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#0F172A",
+    borderRadius: 999,
+    padding: 2,
+    gap: 2,
+    marginTop: 0,
+    marginBottom: 0,
+    width: "80%",
+  },
+
+  filterPill: {
+    flex: 1,
+    height: 32,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    paddingHorizontal: 10,
+    borderRadius: 16,
+  },
+
+  filterPillActive: {
+    backgroundColor: "#FBBF24",
+  },
+
+  filterText: {
+    color: "#94A3B8",
+    fontSize: 14,
+    fontWeight: "600",
+    lineHeight: 18,
+    includeFontPadding: false,
+  },
+
+  filterTextActive: {
+    color: "#0F172A",
+    fontWeight: "700",
   },
 });
