@@ -18,6 +18,14 @@ export type MinifigureCatalog = {
   dataMatrix: DataMatrixMapping[];
 };
 
+type SupabaseMinifigureRow = {
+  id: string;
+  seriesId: string;
+  Set: string;
+  name: string | null;
+  image: string | null;
+};
+
 function getSupabaseHeaders() {
   if (!SUPABASE_ANON_KEY) {
     throw new Error("EXPO_PUBLIC_SUPABASE_ANON_KEY is not configured.");
@@ -72,16 +80,23 @@ export async function fetchCatalogUpdatedAt(): Promise<string> {
 }
 
 /**
- * Fetch all minifigures from Supabase.
+ * Fetch minifigures belonging only to available series.
+ *
+ * Uses the existing foreign key:
+ * minifigures."Set" -> series."Set"
  */
 async function fetchMinifigures(): Promise<Minifigure[]> {
   if (!SUPABASE_URL) {
     throw new Error("EXPO_PUBLIC_SUPABASE_URL is not configured.");
   }
 
-  const url =
-    `${SUPABASE_URL}/rest/v1/${MINIFIGURE_TABLE}` +
-    `?select=id,seriesId,Set,name,image`;
+  const params = new URLSearchParams({
+    select:
+      "id,seriesId,Set,name,image,series!minifigures_Set_fkey!inner(status)",
+    "series.status": "eq.available",
+  });
+
+  const url = `${SUPABASE_URL}/rest/v1/${MINIFIGURE_TABLE}?${params.toString()}`;
 
   const response = await fetch(url, {
     method: "GET",
@@ -104,13 +119,15 @@ async function fetchMinifigures(): Promise<Minifigure[]> {
     throw new Error("Supabase returned invalid minifigure data.");
   }
 
-  const minifigures: Minifigure[] = data.map((figure) => ({
-    id: figure.id,
-    seriesId: figure.seriesId,
-    set: figure.Set ?? null,
-    name: figure.name,
-    image: figure.image,
-  }));
+  const minifigures: Minifigure[] = (data as SupabaseMinifigureRow[]).map(
+    (figure) => ({
+      id: figure.id,
+      seriesId: figure.seriesId,
+      set: figure.Set ?? null,
+      name: figure.name ?? "",
+      image: figure.image,
+    }),
+  );
 
   return minifigures;
 }
@@ -152,11 +169,11 @@ async function fetchDataMatrixMappings(): Promise<DataMatrixMapping[]> {
 }
 
 /**
- * Fetch the complete minifigure catalog.
+ * Fetch the complete available minifigure catalog.
  *
  * Includes:
- * - Minifigure data
- * - Data Matrix mappings
+ * - Minifigures belonging to available series only.
+ * - Data Matrix mappings belonging to those minifigures only.
  */
 export async function fetchMinifigureCatalog(): Promise<MinifigureCatalog> {
   if (!SUPABASE_URL) {
@@ -167,10 +184,18 @@ export async function fetchMinifigureCatalog(): Promise<MinifigureCatalog> {
     throw new Error("EXPO_PUBLIC_SUPABASE_ANON_KEY is not configured.");
   }
 
-  const [minifigures, dataMatrix] = await Promise.all([
+  const [minifigures, allMappings] = await Promise.all([
     fetchMinifigures(),
     fetchDataMatrixMappings(),
   ]);
+
+  const availableMinifigureIds = new Set(
+    minifigures.map((figure) => figure.id),
+  );
+
+  const dataMatrix = allMappings.filter((mapping) =>
+    availableMinifigureIds.has(mapping.minifigure_id),
+  );
 
   return {
     minifigures,

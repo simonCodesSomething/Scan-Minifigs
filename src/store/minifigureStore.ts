@@ -12,7 +12,7 @@ import {
 } from "@/services/minifigureService";
 
 // Increment this whenever the locally cached catalog structure changes.
-const CATALOG_CACHE_VERSION = 2;
+const CATALOG_CACHE_VERSION = 3;
 
 type MinifigureState = {
   minifigures: Minifigure[];
