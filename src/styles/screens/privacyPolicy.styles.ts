@@ -249,4 +249,17 @@ export const styles = StyleSheet.create({
   supportButtonPressed: {
     opacity: 0.8,
   },
+
+  // ---------- Privacy Policy Links ----------
+
+  linkText: {
+    color: colors.primary,
+    textDecorationLine: "underline",
+  },
+
+  // ---------- Advertising ----------
+
+  advertisingSection: {
+    marginBottom: spacing.xxl,
+  },
 });
