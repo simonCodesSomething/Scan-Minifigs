@@ -2,7 +2,7 @@
   "expo": {
     "name": "Scan-Minifigs",
     "slug": "scan-minifigs",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "scanminifigs",
@@ -12,7 +12,7 @@
       "bundleIdentifier": "com.simonreact.scanminifigs"
     },
     "android": {
-      "versionCode": 15,
+      "versionCode": 16,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/icon.png"
@@ -52,7 +52,16 @@
       [
         "react-native-google-mobile-ads",
         {
-          "androidAppId": "ca-app-pub-5794787274519836~8234233640"
+          "androidAppId": "ca-app-pub-5794787274519836~8234233640",
+          "iosAppId": "ca-app-pub-5794787274519836~1930507148"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "enableSceneSupport": true
+          }
         }
       ]
     ],

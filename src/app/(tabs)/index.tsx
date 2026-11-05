@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useCollectionStore } from "@/store/collectionStore";
 import { useMinifigureStore } from "@/store/minifigureStore";
 
+import AdBanner from "@/app/components/ads/adBanner";
 import { styles } from "@/styles/screens/home.styles";
 
 import {
@@ -419,6 +420,7 @@ export default function Index() {
           </View>
         </View>
       </ScrollView>
+      <AdBanner placement="home" />
     </SafeAreaView>
   );
 }

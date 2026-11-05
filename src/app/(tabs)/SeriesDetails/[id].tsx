@@ -14,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { router, useLocalSearchParams } from "expo-router";
 
+import AdBanner from "@/app/components/ads/adBanner";
 import { useCollectionStore } from "@/store/collectionStore";
 import { useMinifigureStore } from "@/store/minifigureStore";
 import { useEffect, useState } from "react";
@@ -301,6 +302,7 @@ export default function SeriesDetailScreen() {
           </View>
         )}
       />
+      <AdBanner placement="collection" />
     </SafeAreaView>
   );
 }

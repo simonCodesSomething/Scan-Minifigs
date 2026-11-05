@@ -1,17 +1,99 @@
 
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useEffect, useState } from "react";
 import {
+  Alert,
+  Linking,
   Pressable,
   ScrollView,
   Text,
   View,
 } from "react-native";
+import {
+  AdsConsent,
+  AdsConsentPrivacyOptionsRequirementStatus,
+} from "react-native-google-mobile-ads";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { styles } from "@/styles/screens/privacyPolicy.styles";
 
 export default function PrivacyPolicyScreen() {
+  const [privacyOptionsRequired, setPrivacyOptionsRequired] =
+    useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function checkPrivacyOptionsRequirement() {
+      try {
+        // Refresh UMP consent information.
+        await AdsConsent.requestInfoUpdate();
+
+        const consentInfo = await AdsConsent.getConsentInfo();
+
+        console.log("UMP consent status:", {
+  privacyOptionsRequirementStatus:
+    consentInfo.privacyOptionsRequirementStatus,
+  canRequestAds: consentInfo.canRequestAds,
+});
+
+        if (isMounted) {
+          setPrivacyOptionsRequired(
+            consentInfo.privacyOptionsRequirementStatus ===
+              AdsConsentPrivacyOptionsRequirementStatus.REQUIRED
+          );
+        }
+      } catch (error) {
+        console.warn(
+          "Unable to check privacy options requirement:",
+          error
+        );
+      }
+    }
+
+    checkPrivacyOptionsRequirement();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  async function handleManagePrivacyChoices() {
+    try {
+      const consentInfo = await AdsConsent.getConsentInfo();
+
+      if (
+        consentInfo.privacyOptionsRequirementStatus !==
+        AdsConsentPrivacyOptionsRequirementStatus.REQUIRED
+      ) {
+        setPrivacyOptionsRequired(false);
+        Alert.alert(
+          "Privacy options unavailable",
+          "There are currently no additional privacy options to manage."
+        );
+        return;
+      }
+
+      await AdsConsent.showPrivacyOptionsForm();
+
+      // Refresh the requirement status after the form closes.
+      const updatedConsentInfo = await AdsConsent.getConsentInfo();
+
+      setPrivacyOptionsRequired(
+        updatedConsentInfo.privacyOptionsRequirementStatus ===
+          AdsConsentPrivacyOptionsRequirementStatus.REQUIRED
+      );
+    } catch (error) {
+      console.warn("Unable to display privacy options:", error);
+
+      Alert.alert(
+        "Unable to open privacy options",
+        "Please try again later."
+      );
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -21,9 +103,7 @@ export default function PrivacyPolicyScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerText}>
-            <Text style={styles.title}>
-              Privacy Policy
-            </Text>
+            <Text style={styles.title}>Privacy Policy</Text>
 
             <Text style={styles.subtitle}>
               How Scan Minifigs collects, uses, and protects
@@ -38,11 +118,7 @@ export default function PrivacyPolicyScreen() {
               pressed && styles.closeButtonPressed,
             ]}
           >
-            <Ionicons
-              name="close"
-              size={24}
-              color="#FFFFFF"
-            />
+            <Ionicons name="close" size={24} color="#FFFFFF" />
           </Pressable>
         </View>
 
@@ -56,9 +132,7 @@ export default function PrivacyPolicyScreen() {
             />
           </View>
 
-          <Text style={styles.cardTitle}>
-            Your Privacy
-          </Text>
+          <Text style={styles.cardTitle}>Your Privacy</Text>
 
           <Text style={styles.cardText}>
             Scan Minifigs is designed to help you identify and
@@ -71,7 +145,7 @@ export default function PrivacyPolicyScreen() {
           </Text>
 
           <Text style={styles.cardText}>
-            Last updated: September 2026
+            Last updated: November 4, 2026
           </Text>
         </View>
 
@@ -82,16 +156,10 @@ export default function PrivacyPolicyScreen() {
           </Text>
 
           <View style={styles.infoCard}>
-            <Ionicons
-              name="camera-outline"
-              size={24}
-              color="#2563EB"
-            />
+            <Ionicons name="camera-outline" size={24} color="#2563EB" />
 
             <View style={styles.infoContent}>
-              <Text style={styles.infoTitle}>
-                Camera Access
-              </Text>
+              <Text style={styles.infoTitle}>Camera Access</Text>
 
               <Text style={styles.infoText}>
                 Scan Minifigs requests access to your device camera
@@ -108,11 +176,7 @@ export default function PrivacyPolicyScreen() {
           </View>
 
           <View style={styles.infoCard}>
-            <Ionicons
-              name="albums-outline"
-              size={24}
-              color="#22C55E"
-            />
+            <Ionicons name="albums-outline" size={24} color="#22C55E" />
 
             <View style={styles.infoContent}>
               <Text style={styles.infoTitle}>
@@ -134,16 +198,10 @@ export default function PrivacyPolicyScreen() {
           </View>
 
           <View style={styles.infoCard}>
-            <Ionicons
-              name="scan-outline"
-              size={24}
-              color="#FBBF24"
-            />
+            <Ionicons name="scan-outline" size={24} color="#FBBF24" />
 
             <View style={styles.infoContent}>
-              <Text style={styles.infoTitle}>
-                Scanned Codes
-              </Text>
+              <Text style={styles.infoTitle}>Scanned Codes</Text>
 
               <Text style={styles.infoText}>
                 When you scan a Data Matrix code, the code is used
@@ -203,13 +261,20 @@ export default function PrivacyPolicyScreen() {
 
             <Text style={styles.cardText}>
               We do not intentionally collect your name, email
-              address, phone number, home address, or payment card
-              information directly through the app.
+              address, phone number, or home address through the
+              app.
             </Text>
 
             <Text style={styles.cardText}>
               We do not intentionally collect photographs or videos
               from your camera.
+            </Text>
+
+            <Text style={styles.cardText}>
+              Scan Minifigs does not directly collect or store your
+              payment card information. Payment information for
+              support purchases is handled by the applicable app
+              store and its payment providers.
             </Text>
           </View>
         </View>
@@ -221,16 +286,10 @@ export default function PrivacyPolicyScreen() {
           </Text>
 
           <View style={styles.infoCard}>
-            <Ionicons
-              name="construct-outline"
-              size={24}
-              color="#A855F7"
-            />
+            <Ionicons name="construct-outline" size={24} color="#A855F7" />
 
             <View style={styles.infoContent}>
-              <Text style={styles.infoTitle}>
-                App Functionality
-              </Text>
+              <Text style={styles.infoTitle}>App Functionality</Text>
 
               <Text style={styles.infoText}>
                 Information is used to provide scanning,
@@ -241,16 +300,10 @@ export default function PrivacyPolicyScreen() {
           </View>
 
           <View style={styles.infoCard}>
-            <Ionicons
-              name="server-outline"
-              size={24}
-              color="#2563EB"
-            />
+            <Ionicons name="server-outline" size={24} color="#2563EB" />
 
             <View style={styles.infoContent}>
-              <Text style={styles.infoTitle}>
-                Catalog Updates
-              </Text>
+              <Text style={styles.infoTitle}>Catalog Updates</Text>
 
               <Text style={styles.infoText}>
                 The app may retrieve updated catalog information
@@ -264,9 +317,7 @@ export default function PrivacyPolicyScreen() {
 
         {/* Local Storage */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Local Storage
-          </Text>
+          <Text style={styles.sectionTitle}>Local Storage</Text>
 
           <View style={styles.card}>
             <Text style={styles.cardText}>
@@ -302,17 +353,16 @@ export default function PrivacyPolicyScreen() {
 
             <Text style={styles.cardText}>
               These services may include Supabase for application
-              data hosting and Google Play services for distributing
-              the app and processing optional in-app support
-              purchases.
+              data hosting, Google Mobile Ads for advertising, and
+              Google Play or Apple services for app distribution
+              and processing optional in-app support purchases.
             </Text>
 
             <Text style={styles.cardText}>
-              Google Play may process information associated with
-              purchases, such as transaction and billing
-              information, in accordance with Google's applicable
-              privacy policies and terms. Scan Minifigs does not
-              receive or store your payment card information.
+              App stores may process transaction and billing
+              information when you make an optional support
+              purchase. Scan Minifigs does not receive or store
+              your payment card information.
             </Text>
 
             <Text style={styles.cardText}>
@@ -322,28 +372,157 @@ export default function PrivacyPolicyScreen() {
           </View>
         </View>
 
-        {/* Optional Support */}
+        {/* Advertising */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
-            Optional Support
+            Advertising and Google Mobile Ads
           </Text>
+
+          <View style={styles.infoCard}>
+            <Ionicons name="megaphone-outline" size={24} color="#FBBF24" />
+
+            <View style={styles.infoContent}>
+              <Text style={styles.infoTitle}>
+                Advertising Services
+              </Text>
+
+              <Text style={styles.infoText}>
+                Scan Minifigs may display advertisements through
+                Google AdMob in supported versions of the app on
+                Android and, when available, iOS.
+              </Text>
+
+              <Text style={styles.infoText}>
+                Google Mobile Ads SDK may automatically collect
+                and process certain information when advertising
+                features are enabled and advertisements are
+                requested or displayed.
+              </Text>
+
+              <Text style={styles.infoText}>
+                This information may include:
+              </Text>
+
+              <Text style={styles.infoText}>
+                {"\u2022"} IP address, which may be used to
+                estimate a device's general location and support
+                advertising delivery.
+              </Text>
+
+              <Text style={styles.infoText}>
+                {"\u2022"} Device identifiers, such as advertising
+                IDs and other device identifiers, subject to
+                device settings and applicable consent
+                requirements.
+              </Text>
+
+              <Text style={styles.infoText}>
+                {"\u2022"} App interactions, such as app launches,
+                advertisement impressions, taps, and interactions
+                with advertisements.
+              </Text>
+
+              <Text style={styles.infoText}>
+                {"\u2022"} Diagnostic and performance information,
+                such as crash information, app launch times, and
+                SDK performance information.
+              </Text>
+
+              <Text style={styles.infoText}>
+                {"\u2022"} Advertising information, such as
+                advertisements delivered and interactions with
+                those advertisements.
+              </Text>
+
+              <Text style={styles.infoText}>
+                Google and its advertising partners may use this
+                information to deliver advertisements, measure
+                advertising performance, prevent fraud and abuse,
+                and improve advertising services.
+              </Text>
+
+              <Text style={styles.infoText}>
+                Depending on applicable consent requirements,
+                user choices, and device settings, information
+                may also be used to provide personalized
+                advertising.
+              </Text>
+
+              <Text style={styles.infoText}>
+                Where required, consent choices will be requested
+                before applicable advertising technologies are
+                used.
+              </Text>
+
+              <Text style={styles.infoText}>
+                Users may manage advertising preferences through
+                available consent options, their device settings,
+                and Google's advertising controls.
+              </Text>
+
+              <Text style={styles.infoText}>
+                Google Mobile Ads is a third-party service.
+                Information processed through its SDK is subject
+                to Google's privacy policies and applicable terms.
+              </Text>
+
+              <Text style={styles.infoText}>For more information:</Text>
+
+              <Pressable
+                onPress={() =>
+                  Linking.openURL("https://policies.google.com/privacy")
+                }
+              >
+                <Text style={styles.infoText}>
+                  Google Privacy Policy
+                </Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() =>
+                  Linking.openURL(
+                    "https://policies.google.com/technologies/partner-sites"
+                  )
+                }
+              >
+                <Text style={styles.infoText}>
+                  How Google uses information from sites or apps
+                  that use its services
+                </Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() =>
+                  Linking.openURL("https://adssettings.google.com/")
+                }
+              >
+                <Text style={styles.infoText}>Google Ads Settings</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+
+        {/* Optional Support */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Optional Support</Text>
 
           <View style={styles.card}>
             <Text style={styles.cardText}>
               Scan Minifigs may offer an optional in-app support
-              purchase through Google Play Billing.
+              purchase through Google Play Billing or, where
+              available, Apple In-App Purchase.
             </Text>
 
             <Text style={styles.cardText}>
               If you choose to make a support purchase, the
-              transaction is processed through Google Play. Scan
-              Minifigs does not collect or store your payment card
-              information.
+              transaction is processed through the applicable
+              app store. Scan Minifigs does not collect or store
+              your payment card information.
             </Text>
 
             <Text style={styles.cardText}>
               Information associated with the transaction may be
-              processed by Google Play in accordance with Google's
+              processed by the app store in accordance with its
               applicable privacy policy, terms, and payment
               processing practices.
             </Text>
@@ -358,9 +537,7 @@ export default function PrivacyPolicyScreen() {
 
         {/* Data Security */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Data Security
-          </Text>
+          <Text style={styles.sectionTitle}>Data Security</Text>
 
           <View style={styles.card}>
             <Text style={styles.cardText}>
@@ -370,17 +547,15 @@ export default function PrivacyPolicyScreen() {
 
             <Text style={styles.cardText}>
               However, no electronic storage system or method of
-              transmission over the internet can be guaranteed to
-              be completely secure.
+              transmission over the internet can be guaranteed
+              to be completely secure.
             </Text>
           </View>
         </View>
 
         {/* Children's Privacy */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Children's Privacy
-          </Text>
+          <Text style={styles.sectionTitle}>Children's Privacy</Text>
 
           <View style={styles.card}>
             <Text style={styles.cardText}>
@@ -389,18 +564,16 @@ export default function PrivacyPolicyScreen() {
             </Text>
 
             <Text style={styles.cardText}>
-              The app does not require an account or submission of
-              personal information to use its core scanning and
-              collection features.
+              The app does not require an account or submission
+              of personal information to use its core scanning
+              and collection features.
             </Text>
           </View>
         </View>
 
         {/* Your Choices */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Your Choices
-          </Text>
+          <Text style={styles.sectionTitle}>Your Choices</Text>
 
           <View style={styles.card}>
             <Text style={styles.cardText}>
@@ -411,10 +584,55 @@ export default function PrivacyPolicyScreen() {
 
             <Text style={styles.cardText}>
               You can also choose whether to make an optional
-              support purchase through Google Play. Support is not
-              required to use the app's core features.
+              support purchase through the applicable app store.
+              Support is not required to use the app's core
+              features.
+            </Text>
+
+            <Text style={styles.cardText}>
+              Where advertising consent options are provided,
+              you can review and make choices about the processing
+              of information for advertising. You can also manage
+              available advertising preferences through your
+              device settings and Google's advertising controls.
             </Text>
           </View>
+
+          {/* UMP Privacy Options Entry Point */}
+          {privacyOptionsRequired && (
+            <Pressable
+              onPress={handleManagePrivacyChoices}
+              accessibilityRole="button"
+              accessibilityLabel="Manage Privacy Choices"
+              style={({ pressed }) => [
+                styles.infoCard,
+                pressed && { opacity: 0.75 },
+              ]}
+            >
+              <Ionicons
+                name="shield-checkmark-outline"
+                size={24}
+                color="#FBBF24"
+              />
+
+              <View style={styles.infoContent}>
+                <Text style={styles.infoTitle}>
+                  Manage Privacy Choices
+                </Text>
+
+                <Text style={styles.infoText}>
+                  Review or change your advertising consent and
+                  privacy preferences.
+                </Text>
+              </View>
+
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color="#FBBF24"
+              />
+            </Pressable>
+          )}
         </View>
 
         {/* Policy Changes */}
@@ -439,9 +657,7 @@ export default function PrivacyPolicyScreen() {
 
         {/* Contact */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Contact
-          </Text>
+          <Text style={styles.sectionTitle}>Contact</Text>
 
           <View style={styles.card}>
             <Text style={styles.cardText}>
@@ -471,4 +687,3 @@ export default function PrivacyPolicyScreen() {
     </SafeAreaView>
   );
 }
-

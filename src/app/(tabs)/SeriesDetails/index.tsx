@@ -22,6 +22,7 @@ import { router } from "expo-router";
 
 import { useEffect, useState } from "react";
 
+import AdBanner from "@/app/components/ads/adBanner";
 import { getSeries } from "../../../services/series";
 
 
@@ -483,7 +484,7 @@ export default function SeriesScreen() {
           );
         }}
       />
-
+    <AdBanner placement="series" />
     </SafeAreaView>
   );
 }
