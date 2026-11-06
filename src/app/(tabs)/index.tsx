@@ -152,6 +152,7 @@ export default function Index() {
       <SafeAreaView
         style={[
           styles.container,
+          
           {
             justifyContent: "center",
             alignItems: "center",
@@ -173,7 +174,7 @@ export default function Index() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <View style={styles.header}>
         <Text style={styles.title}>
           Scan Minifigs

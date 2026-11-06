@@ -2,7 +2,7 @@
   "expo": {
     "name": "Scan-Minifigs",
     "slug": "scan-minifigs",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "scanminifigs",
@@ -12,7 +12,7 @@
       "bundleIdentifier": "com.simonreact.scanminifigs"
     },
     "android": {
-      "versionCode": 16,
+      "versionCode": 17,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/icon.png"

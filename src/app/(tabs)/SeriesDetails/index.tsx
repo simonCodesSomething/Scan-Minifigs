@@ -210,6 +210,7 @@ export default function SeriesScreen() {
   return (
     <SafeAreaView
       style={styles.container}
+      edges={["top", "left", "right"]}
     >
 
       {/* Fixed page header */}

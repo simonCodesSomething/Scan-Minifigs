@@ -108,7 +108,7 @@ export default function SeriesDetailScreen() {
     figures.length === 0 ? 0 : (ownedUnique / figures.length) * 100;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <Pressable style={styles.backButton} onPress={handleBack}>
         <Ionicons name="chevron-back" size={24} color="#FFF" />
       </Pressable>
