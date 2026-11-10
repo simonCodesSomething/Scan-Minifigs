@@ -15,6 +15,19 @@ interface AdBannerProps {
   placement: AdPlacement;
 }
 
+// ---------------------------------------------------------
+// SCREENSHOT MODE
+// ---------------------------------------------------------
+// Set to true when capturing Google Play Store screenshots.
+// Set to false before building a production release.
+// ---------------------------------------------------------
+
+const HIDE_ADS_FOR_SCREENSHOTS = false;
+
+// ---------------------------------------------------------
+// ADMOB UNIT IDS
+// ---------------------------------------------------------
+
 const AD_UNIT_IDS = {
   android: {
     home: "ca-app-pub-5794787274519836/7078289406",
@@ -28,6 +41,10 @@ const AD_UNIT_IDS = {
   },
 };
 
+// ---------------------------------------------------------
+// COMPONENT
+// ---------------------------------------------------------
+
 export default function AdBanner({
   placement,
 }: AdBannerProps) {
@@ -35,6 +52,11 @@ export default function AdBanner({
   const [adFailed, setAdFailed] = useState(false);
 
   useEffect(() => {
+    // Skip consent checking for screenshots.
+    if (HIDE_ADS_FOR_SCREENSHOTS) {
+      return;
+    }
+
     let isActive = true;
 
     async function checkConsent() {
@@ -56,6 +78,12 @@ export default function AdBanner({
     };
   }, []);
 
+  // Hide ads when capturing promotional screenshots.
+  if (HIDE_ADS_FOR_SCREENSHOTS) {
+    return null;
+  }
+
+  // Hide ads if consent is unavailable or loading failed.
   if (!canRequestAds || adFailed) {
     return null;
   }
@@ -79,6 +107,10 @@ export default function AdBanner({
     </View>
   );
 }
+
+// ---------------------------------------------------------
+// STYLES
+// ---------------------------------------------------------
 
 const styles = StyleSheet.create({
   container: {
