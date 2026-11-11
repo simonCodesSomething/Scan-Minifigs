@@ -18,9 +18,6 @@ interface AdBannerProps {
 // ---------------------------------------------------------
 // SCREENSHOT MODE
 // ---------------------------------------------------------
-// Set to true when capturing Google Play Store screenshots.
-// Set to false before building a production release.
-// ---------------------------------------------------------
 
 const HIDE_ADS_FOR_SCREENSHOTS = false;
 
@@ -52,7 +49,6 @@ export default function AdBanner({
   const [adFailed, setAdFailed] = useState(false);
 
   useEffect(() => {
-    // Skip consent checking for screenshots.
     if (HIDE_ADS_FOR_SCREENSHOTS) {
       return;
     }
@@ -78,12 +74,10 @@ export default function AdBanner({
     };
   }, []);
 
-  // Hide ads when capturing promotional screenshots.
   if (HIDE_ADS_FOR_SCREENSHOTS) {
     return null;
   }
 
-  // Hide ads if consent is unavailable or loading failed.
   if (!canRequestAds || adFailed) {
     return null;
   }
@@ -98,9 +92,15 @@ export default function AdBanner({
     <View style={styles.container}>
       <BannerAd
         unitId={adUnitId}
-        size={BannerAdSize.BANNER}
+        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        onAdLoaded={() => {
+          console.log(`[AdBanner] ${placement} loaded`);
+        }}
         onAdFailedToLoad={(error) => {
-          console.warn("Banner ad failed to load:", error);
+          console.warn(
+            `[AdBanner] ${placement} failed:`,
+            error
+          );
           setAdFailed(true);
         }}
       />

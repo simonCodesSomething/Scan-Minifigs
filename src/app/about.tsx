@@ -379,7 +379,7 @@ const handleSupport = async () => {
             </Text>
 
             <Text style={styles.versionNumber}>
-              Version 1.0.8
+              Version 2.0.5
             </Text>
           </View>
 
