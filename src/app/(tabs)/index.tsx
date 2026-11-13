@@ -273,6 +273,16 @@ export default function Index() {
           )}
         </View>
 
+                        {/* Advertisement */}
+        <View
+          style={{
+            alignItems: "center",
+            marginVertical: 16,
+          }}
+        >
+          <AdBanner placement="home" />
+        </View>
+
         {/* Collection */}
 
         <View style={styles.section}>
@@ -322,6 +332,8 @@ export default function Index() {
             </View>
           </View>
         </View>
+
+
 
         {/* Application Updates */}
 
@@ -421,7 +433,6 @@ export default function Index() {
           </View>
         </View>
       </ScrollView>
-      <AdBanner placement="home" />
     </SafeAreaView>
   );
 }
