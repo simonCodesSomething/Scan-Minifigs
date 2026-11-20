@@ -1,10 +1,11 @@
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useCollectionStore } from "@/store/collectionStore";
 import { useMinifigureStore } from "@/store/minifigureStore";
 
 import AdBanner from "@/app/components/ads/adBanner";
+import { recordSuccessfulScanForReview } from "@/services/appReview";
 import { styles } from "@/styles/screens/home.styles";
 
 import {
@@ -12,7 +13,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 
 import {
   ActivityIndicator,
@@ -27,6 +28,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import type { ApplicationUpdate } from "@/models/applicationUpdate";
 import { fetchLatestApplicationUpdate } from "@/services/applicationUpdate";
+import { maybeRequestAppReview } from "@/services/appReview";
 
 function getCategoryLabel(category: ApplicationUpdate["category"]) {
   switch (category) {
@@ -72,6 +74,20 @@ export default function Index() {
   const [updateLoading, setUpdateLoading] = useState(true);
 
   const [updateError, setUpdateError] = useState(false);
+
+  // Check review eligibility only while Home is focused and
+  // after the minifigure catalog has finished loading.
+  useFocusEffect(
+    useCallback(() => {
+      if (!minifiguresLoaded) return;
+
+      const timeout = setTimeout(() => {
+        void maybeRequestAppReview();
+      }, 1000);
+
+      return () => clearTimeout(timeout);
+    }, [minifiguresLoaded])
+  );
 
   useEffect(() => {
     let isActive = true;
@@ -190,6 +206,34 @@ export default function Index() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
+        
+        {__DEV__ && (
+  <TouchableOpacity
+    onPress={async () => {
+      await recordSuccessfulScanForReview();
+
+      console.log("[AppReview] Test scan recorded");
+
+      await maybeRequestAppReview();
+    }}
+    style={{
+      backgroundColor: "#FBBF24",
+      padding: 14,
+      borderRadius: 10,
+      alignItems: "center",
+      marginBottom: 16,
+    }}
+  >
+    <Text
+      style={{
+        color: "#111827",
+        fontWeight: "700",
+      }}
+    >
+      Test Review Prompt
+    </Text>
+  </TouchableOpacity>
+)}
         {/* Scan */}
 
         <TouchableOpacity
@@ -273,7 +317,7 @@ export default function Index() {
           )}
         </View>
 
-                        {/* Advertisement */}
+        {/* Advertisement */}
         <View
           style={{
             alignItems: "center",

@@ -1,3 +1,4 @@
+
 import { Ionicons } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as Haptics from "expo-haptics";
@@ -12,6 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Minifigure } from "@/models/minifigure";
+import { recordSuccessfulScanForReview } from "@/services/appReview";
 import { useCollectionStore } from "@/store/collectionStore";
 import { useMinifigureStore } from "@/store/minifigureStore";
 import { styles } from "@/styles/screens/scan.styles";
@@ -43,6 +45,7 @@ export default function ScanScreen() {
   const decrement = useCollectionStore(
     (state) => state.decrement
   );
+
   const lookupDataMatrix = useMinifigureStore(
     (state) => state.lookupDataMatrix
   );
@@ -100,11 +103,10 @@ export default function ScanScreen() {
       console.log("MINIFIGURE FOUND:", result.id);
 
       setScanResult(result);
-
       addScanToHistory(result.id);
 
       if (hapticsEnabled) {
-        Haptics.notificationAsync(
+        void Haptics.notificationAsync(
           Haptics.NotificationFeedbackType.Success
         );
       }
@@ -114,7 +116,7 @@ export default function ScanScreen() {
       setScanResult(null);
 
       if (hapticsEnabled) {
-        Haptics.notificationAsync(
+        void Haptics.notificationAsync(
           Haptics.NotificationFeedbackType.Error
         );
       }
@@ -136,6 +138,35 @@ export default function ScanScreen() {
         id: scanResult.id,
       },
     });
+  };
+
+  /**
+   * Called when a user explicitly adds a scanned
+   * minifigure or increases its quantity.
+   *
+   * Review tracking happens only after the
+   * collection has been updated.
+   */
+  const handleAddMinifigure = () => {
+    if (!scanResult) {
+      return;
+    }
+
+    if (alreadyOwned) {
+      increment(scanResult.id);
+    } else {
+      addScan(scanResult.id);
+
+      if (hapticsEnabled) {
+        void Haptics.notificationAsync(
+          Haptics.NotificationFeedbackType.Success
+        );
+      }
+    }
+
+    // Count a confirmed collection addition
+    // toward the app review eligibility threshold.
+    void recordSuccessfulScanForReview();
   };
 
   if (!permission) {
@@ -182,9 +213,7 @@ export default function ScanScreen() {
         backgroundColor: "black",
       }}
     >
-      {/* CAMERA
-          Keep this exactly like the working test.
-      */}
+      {/* CAMERA */}
       {isFocused && (
         <CameraView
           style={{
@@ -279,20 +308,7 @@ export default function ScanScreen() {
 
                     <TouchableOpacity
                       style={styles.quantityButton}
-                      onPress={() => {
-                        if (alreadyOwned) {
-                          increment(scanResult.id);
-                        } else {
-                          addScan(scanResult.id);
-
-                          if (hapticsEnabled) {
-                            Haptics.notificationAsync(
-                              Haptics.NotificationFeedbackType
-                                .Success
-                            );
-                          }
-                        }
-                      }}
+                      onPress={handleAddMinifigure}
                     >
                       <Ionicons
                         name="add"
@@ -300,7 +316,6 @@ export default function ScanScreen() {
                         color="#111827"
                       />
                     </TouchableOpacity>
-
                   </View>
                 </View>
               </>
@@ -348,9 +363,9 @@ export default function ScanScreen() {
 
           <TouchableOpacity
             style={styles.controlButton}
-            onPress={() =>
-              setShowSettings(true)
-            }
+            onPress={() => {
+              setShowSettings(true);
+            }}
           >
             <Ionicons
               name="ellipsis-vertical-circle-sharp"
@@ -364,9 +379,9 @@ export default function ScanScreen() {
       {/* SETTINGS */}
       <CameraSettingsSheet
         visible={showSettings}
-        onClose={() =>
-          setShowSettings(false)
-        }
+        onClose={() => {
+          setShowSettings(false);
+        }}
         continuousScan={continuousScan}
         setContinuousScan={setContinuousScan}
         haptics={hapticsEnabled}
@@ -375,4 +390,3 @@ export default function ScanScreen() {
     </View>
   );
 }
-

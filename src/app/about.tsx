@@ -59,6 +59,29 @@ const handleSupport = async () => {
   }
 };
 
+  const handleRateApp = async () => {
+    if (Platform.OS !== "android") {
+      Alert.alert(
+        "Not Available Yet",
+        "The App Store review link will be added when Scan Minifigs is available on iOS."
+      );
+      return;
+    }
+
+    const storeUrl =
+      "https://play.google.com/store/apps/details?id=com.simonreact.scanminifigs";
+
+    try {
+      await Linking.openURL(storeUrl);
+    } catch (error) {
+      console.error("Unable to open Google Play:", error);
+      Alert.alert(
+        "Unable to Open Google Play",
+        "Please open Google Play and search for Scan Minifigs to leave a review."
+      );
+    }
+  };
+
   const handleReportCode = async () => {
     const email = "developersims@icloud.com";
     const subject = "New Scan Minifigs Data Matrix Code";
@@ -382,6 +405,39 @@ const handleSupport = async () => {
               Version 2.0.5
             </Text>
           </View>
+
+          {/* Rate the App */}
+          <Pressable
+            onPress={handleRateApp}
+            accessibilityRole="button"
+            accessibilityLabel="Rate Scan Minifigs on Google Play"
+            style={({ pressed }) => [
+              styles.infoCard,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <Ionicons
+              name="star-outline"
+              size={24}
+              color="#FBBF24"
+            />
+
+            <View style={styles.infoContent}>
+              <Text style={styles.infoTitle}>
+                Rate Scan Minifigs
+              </Text>
+
+              <Text style={styles.infoText}>
+                Enjoying the app? Leave a review on Google Play.
+              </Text>
+            </View>
+
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color="#777777"
+            />
+          </Pressable>
 
           {/* Privacy Policy */}
           <Pressable
